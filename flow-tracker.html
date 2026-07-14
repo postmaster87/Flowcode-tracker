@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#123F2A">
+<title>FlowCode Range Tracker</title>
+<style>
+  :root{
+    --ink:#14201A;
+    --paper:#FAFAF6;
+    --card:#FFFFFF;
+    --green:#1E5E3F;
+    --green-deep:#123F2A;
+    --green-soft:#E4EFE8;
+    --amber:#B45309;
+    --amber-soft:#FBEEDC;
+    --line:#D8DED9;
+    --muted:#5C6A61;
+    --danger:#9B2C2C;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.4;
+    padding-bottom:40px;
+  }
+  /* ---- Creed banner ---- */
+  .creed{
+    background:var(--green-deep);color:#F2F7F3;
+    padding:14px 18px;text-align:center;
+  }
+  .creed .line1{font-weight:700;font-size:15px;letter-spacing:.01em}
+  .creed .line2{font-size:13px;opacity:.75;font-style:italic;margin-top:3px}
+  /* ---- Header ---- */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 6px;
+  }
+  header h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em}
+  .hdr-btns{display:flex;gap:8px;align-items:center}
+  .chip{
+    border:1.5px solid var(--line);background:var(--card);
+    border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;
+    color:var(--muted);display:flex;align-items:center;gap:6px;
+  }
+  .chip.on{border-color:var(--green);color:var(--green)}
+  .iconbtn{
+    border:1.5px solid var(--line);background:var(--card);border-radius:999px;
+    width:38px;height:38px;font-size:17px;display:flex;align-items:center;justify-content:center;
+  }
+  /* ---- Cards ---- */
+  main{padding:6px 14px}
+  .card{
+    background:var(--card);border:1.5px solid var(--line);
+    border-radius:var(--radius);padding:16px;margin-bottom:14px;
+  }
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--muted);margin:0 0 10px;font-weight:700}
+  /* ---- Block banner ---- */
+  .block-banner{
+    border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-weight:800;font-size:16px;
+  }
+  .block-banner.routine{background:var(--green-soft);color:var(--green-deep);border:1.5px solid var(--green)}
+  .block-banner.pressure{background:var(--amber-soft);color:var(--amber);border:1.5px solid var(--amber)}
+  .block-banner .count{font-variant-numeric:tabular-nums}
+  /* ---- Presence timer ---- */
+  .presence{
+    text-align:center;padding:10px;border-radius:10px;margin-bottom:14px;
+    font-weight:700;font-size:15px;background:var(--green-soft);color:var(--green-deep);
+    font-variant-numeric:tabular-nums;
+  }
+  .presence.ready{background:transparent;color:var(--muted);font-weight:600}
+  /* ---- Stats ---- */
+  .stats{display:flex;gap:10px}
+  .stat{flex:1;text-align:center;background:var(--paper);border-radius:10px;padding:10px 4px}
+  .stat .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+  /* ---- Log controls ---- */
+  .seg{display:flex;gap:8px;margin-bottom:12px}
+  .seg button{
+    flex:1;padding:16px 0;font-size:18px;font-weight:800;border-radius:12px;
+    border:2px solid var(--line);background:var(--card);color:var(--ink);
+  }
+  .seg button.sel-y{background:var(--green);border-color:var(--green);color:#fff}
+  .seg button.sel-n{background:var(--danger);border-color:var(--danger);color:#fff}
+  .seg button.sel-g{background:var(--green);border-color:var(--green);color:#fff}
+  .seg button.sel-a{background:var(--amber);border-color:var(--amber);color:#fff}
+  .seg.mushin button{padding:14px 0;font-size:17px}
+  .lbl{font-size:13px;font-weight:700;color:var(--muted);margin:0 0 6px;
+    text-transform:uppercase;letter-spacing:.06em}
+  input[type=text]{
+    width:100%;padding:12px;font-size:16px;border:1.5px solid var(--line);
+    border-radius:10px;background:var(--card);color:var(--ink);font-family:inherit;
+  }
+  input[type=number]{
+    width:100%;padding:12px;font-size:16px;border:1.5px solid var(--line);
+    border-radius:10px;background:var(--card);color:var(--ink);font-family:inherit;
+  }
+  .big{
+    width:100%;padding:18px 0;font-size:19px;font-weight:800;border-radius:14px;
+    border:none;background:var(--green);color:#fff;margin-top:14px;
+  }
+  .big:disabled{opacity:.45}
+  .big.secondary{background:var(--card);color:var(--green-deep);border:2px solid var(--green)}
+  .big.quiet{background:var(--paper);color:var(--muted);border:1.5px solid var(--line);font-weight:700;font-size:16px;padding:13px 0}
+  .linkbtn{background:none;border:none;color:var(--muted);font-size:14px;
+    text-decoration:underline;padding:10px;display:block;margin:6px auto 0;font-family:inherit}
+  /* ---- Lists ---- */
+  .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .row:last-child{border-bottom:none}
+  .row .sub{color:var(--muted);font-size:13px}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:8px 0}
+  /* ---- Modal ---- */
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(10,20,14,.55);
+    display:none;align-items:flex-end;justify-content:center;z-index:50;
+  }
+  .modal-bg.open{display:flex}
+  .modal{
+    background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:560px;
+    padding:22px 18px 30px;max-height:88vh;overflow-y:auto;
+  }
+  .modal h3{margin:0 0 14px;font-size:18px;font-weight:800}
+  textarea{
+    width:100%;min-height:120px;padding:12px;font-size:14px;font-family:monospace;
+    border:1.5px solid var(--line);border-radius:10px;
+  }
+  /* ---- Circle drill ---- */
+  .drill-timer{
+    text-align:center;font-size:52px;font-weight:800;font-variant-numeric:tabular-nums;
+    color:var(--amber);margin:18px 0;
+  }
+  .drill-note{text-align:center;color:var(--muted);font-size:14px;margin-bottom:6px}
+  .field{margin-bottom:14px}
+  .toast{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+    background:var(--green-deep);color:#fff;padding:11px 20px;border-radius:999px;
+    font-size:14px;font-weight:700;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99;
+  }
+  .toast.show{opacity:1}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+
+<div class="creed">
+  <div class="line1">See it, feel yourself, quiet the mind, and let it go.</div>
+  <div class="line2">The cloud doesn't change the sky.</div>
+</div>
+
+<header>
+  <h1>FlowCode</h1>
+  <div class="hdr-btns">
+    <button class="chip" id="authChip">Cloud off</button>
+    <button class="iconbtn" id="settingsBtn" aria-label="Settings">&#9881;</button>
+  </div>
+</header>
+
+<main>
+  <!-- Session state -->
+  <div id="noSession">
+    <button class="big" id="startBtn">Start session</button>
+    <div class="card" style="margin-top:14px" id="lastSummaryCard">
+      <h2>Last session</h2>
+      <div id="lastSummary" class="empty">No sessions yet. Start one at the range.</div>
+    </div>
+  </div>
+
+  <div id="activeSession" style="display:none">
+    <div class="block-banner routine" id="blockBanner">
+      <span id="blockName">Routine reps</span>
+      <span class="count" id="blockCount">1 / 10</span>
+    </div>
+
+    <div class="presence ready" id="presence">Present. Log your next shot.</div>
+
+    <div class="card">
+      <h2>Session</h2>
+      <div class="stats">
+        <div class="stat"><div class="v" id="stShots">0</div><div class="l">Shots</div></div>
+        <div class="stat"><div class="v" id="stStack">&ndash;</div><div class="l">Stack Y</div></div>
+        <div class="stat"><div class="v" id="stMushin">&ndash;</div><div class="l">Mushin</div></div>
+        <div class="stat"><div class="v" id="stStreak">0</div><div class="l">Streak</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Log shot</h2>
+      <p class="lbl">Stack &mdash; full routine?</p>
+      <div class="seg" id="stackSeg">
+        <button data-v="Y">Yes</button>
+        <button data-v="N">No</button>
+      </div>
+      <p class="lbl">Mushin at impact</p>
+      <div class="seg mushin" id="mushinSeg">
+        <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button>
+        <button data-v="4">4</button><button data-v="5">5</button>
+      </div>
+      <div id="fairwayWrap" style="display:none">
+        <p class="lbl">Fairway (pressure)</p>
+        <div class="seg" id="fairwaySeg">
+          <button data-v="hit">Hit</button>
+          <button data-v="miss">Miss</button>
+        </div>
+      </div>
+      <p class="lbl">Mind note</p>
+      <input type="text" id="noteInput" maxlength="20" placeholder="20 chars max" autocomplete="off">
+      <button class="big" id="logBtn" disabled>Log shot</button>
+      <button class="linkbtn" id="endBtn">End session</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Circle drills</h2>
+    <div id="drillList" class="empty">No drills yet.</div>
+  </div>
+
+  <div class="card">
+    <h2>Past sessions</h2>
+    <div id="sessionList" class="empty">Nothing here yet.</div>
+  </div>
+
+  <div class="card">
+    <h2>Backup</h2>
+    <button class="big secondary" id="shareBtn" style="margin-top:0">Share backup</button>
+    <button class="big quiet" id="restoreBtn">Restore from paste</button>
+  </div>
+</main>
+
+<!-- Settings modal -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h3>Settings</h3>
+    <div class="field">
+      <p class="lbl">Presence pause (seconds)</p>
+      <input type="number" id="setPause" min="15" max="600" inputmode="numeric">
+    </div>
+    <div class="field">
+      <p class="lbl">Shots per block</p>
+      <input type="number" id="setBlock" min="3" max="50" inputmode="numeric">
+    </div>
+    <button class="big" id="saveSettings">Save settings</button>
+    <button class="big quiet" id="closeSettings">Close</button>
+  </div>
+</div>
+
+<!-- Restore modal -->
+<div class="modal-bg" id="restoreModal">
+  <div class="modal">
+    <h3>Restore from paste</h3>
+    <p style="font-size:14px;color:var(--muted);margin-top:0">Paste a backup you shared earlier. This replaces everything on this device.</p>
+    <textarea id="restoreText" placeholder='{"sessions": ...}'></textarea>
+    <button class="big" id="doRestore">Restore data</button>
+    <button class="big quiet" id="closeRestore">Cancel</button>
+  </div>
+</div>
+
+<!-- Circle drill modal -->
+<div class="modal-bg" id="drillModal">
+  <div class="modal">
+    <h3>Circle Drill</h3>
+    <p class="drill-note">8 putts, 3 feet, full circle. All in a row.<br>Miss one &mdash; the circle restarts.</p>
+    <div class="drill-timer" id="drillTimer">0:00</div>
+    <button class="big" id="drillDone">Drill complete</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+/* =========================================================
+   FIREBASE CONFIG — paste yours from the Firebase console.
+   App works fully offline without it; cloud sync stays off.
+   ========================================================= */
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE_PROJECT.firebaseapp.com",
+  projectId: "PASTE_PROJECT_ID",
+  storageBucket: "PASTE_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
+
+/* ---------------- State + redundant persistence ---------------- */
+const K1 = "flowtracker_v1";
+const K2 = "flowtracker_v1_backup";
+
+const defaultState = () => ({
+  settings: { pauseSec: 120, shotsPerBlock: 10 },
+  sessions: [],
+  updatedAt: 0
+});
+
+function loadState(){
+  for (const k of [K1, K2]){
+    try {
+      const raw = localStorage.getItem(k);
+      if (raw){
+        const s = JSON.parse(raw);
+        if (s && Array.isArray(s.sessions)) return s;
+      }
+    } catch(e){ /* corrupt copy — try the other key */ }
+  }
+  return defaultState();
+}
+
+let state = loadState();
+
+function persist(){
+  state.updatedAt = Date.now();
+  const raw = JSON.stringify(state);
+  try { localStorage.setItem(K1, raw); } catch(e){}
+  try { localStorage.setItem(K2, raw); } catch(e){}
+  schedulePush();
+  render();
+}
+
+/* ---------------- Helpers ---------------- */
+const $ = id => document.getElementById(id);
+const activeSession = () => state.sessions.find(s => !s.endedAt);
+const fmtClock = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+const fmtDate = t => new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+function sessionStats(sess){
+  const n = sess.shots.length;
+  const ys = sess.shots.filter(x=>x.stack==="Y").length;
+  const mAvg = n ? (sess.shots.reduce((a,x)=>a+x.mushin,0)/n) : 0;
+  let best=0, cur=0;
+  for (const x of sess.shots){ cur = x.stack==="Y" ? cur+1 : 0; if (cur>best) best=cur; }
+  return { n, pct: n?Math.round(ys/n*100):null, mAvg: n?mAvg.toFixed(1):null, best };
+}
+
+/* ---------------- Selection state for the log card ---------------- */
+let sel = { stack:null, mushin:null, fairway:null };
+
+function bindSeg(segId, key, classes){
+  $(segId).addEventListener("click", e=>{
+    const b = e.target.closest("button"); if(!b) return;
+    sel[key] = b.dataset.v;
+    [...$(segId).children].forEach(x=>x.className="");
+    b.className = classes[b.dataset.v] || "sel-g";
+    updateLogBtn();
+  });
+}
+bindSeg("stackSeg","stack",{Y:"sel-y",N:"sel-n"});
+bindSeg("mushinSeg","mushin",{});
+bindSeg("fairwaySeg","fairway",{hit:"sel-g",miss:"sel-a"});
+
+function clearSelections(){
+  sel = { stack:null, mushin:null, fairway:null };
+  for (const id of ["stackSeg","mushinSeg","fairwaySeg"])
+    [...$(id).children].forEach(x=>x.className="");
+  $("noteInput").value = "";
+  updateLogBtn();
+}
+
+function currentBlock(sess){
+  return sess.shots.length < state.settings.shotsPerBlock ? "routine" : "pressure";
+}
+
+function updateLogBtn(){
+  const sess = activeSession(); if(!sess) return;
+  const needFairway = currentBlock(sess)==="pressure";
+  $("logBtn").disabled = !(sel.stack && sel.mushin && (!needFairway || sel.fairway));
+}
+
+/* ---------------- Session flow ---------------- */
+$("startBtn").onclick = ()=>{
+  state.sessions.push({ id: Date.now(), startedAt: Date.now(), endedAt: null, shots: [], drills: [] });
+  clearSelections();
+  persist();
+};
+
+$("endBtn").onclick = ()=>{
+  const sess = activeSession(); if(!sess) return;
+  sess.endedAt = Date.now();
+  persist();
+  toast("Session saved");
+};
+
+$("logBtn").onclick = ()=>{
+  const sess = activeSession(); if(!sess) return;
+  const block = currentBlock(sess);
+  const shot = {
+    t: Date.now(),
+    stack: sel.stack,
+    mushin: Number(sel.mushin),
+    note: $("noteInput").value.trim().slice(0,20),
+    block,
+    fairway: block==="pressure" ? sel.fairway : null
+  };
+  sess.shots.push(shot);
+  const missed = shot.fairway==="miss";
+  clearSelections();
+  persist();
+  if (missed) openDrill();
+};
+
+/* ---------------- Presence timer (timestamp-based) ---------------- */
+setInterval(()=>{
+  const sess = activeSession();
+  const el = $("presence");
+  if (!sess || !sess.shots.length){
+    el.className = "presence ready";
+    el.textContent = "Present. Log your next shot.";
+    return;
+  }
+  const last = sess.shots[sess.shots.length-1].t;
+  const elapsed = Math.floor((Date.now()-last)/1000);
+  const remain = state.settings.pauseSec - elapsed;
+  if (remain > 0){
+    el.className = "presence";
+    el.textContent = `Breathe — ${fmtClock(remain)}`;
+  } else {
+    el.className = "presence ready";
+    el.textContent = "Present. Next shot when ready.";
+  }
+}, 500);
+
+/* ---------------- Circle drill ---------------- */
+let drillStart = null, drillInt = null;
+function openDrill(){
+  drillStart = Date.now();
+  $("drillModal").classList.add("open");
+  drillInt = setInterval(()=>{
+    $("drillTimer").textContent = fmtClock(Math.floor((Date.now()-drillStart)/1000));
+  }, 300);
+}
+$("drillDone").onclick = ()=>{
+  clearInterval(drillInt);
+  const dur = Math.floor((Date.now()-drillStart)/1000);
+  const sess = activeSession();
+  (sess || state.sessions[state.sessions.length-1] || {drills:[]}).drills.push({ t: Date.now(), durationSec: dur });
+  $("drillModal").classList.remove("open");
+  persist();
+  toast(`Circle closed — ${fmtClock(dur)}`);
+};
+
+/* ---------------- Settings ---------------- */
+$("settingsBtn").onclick = ()=>{
+  $("setPause").value = state.settings.pauseSec;
+  $("setBlock").value = state.settings.shotsPerBlock;
+  $("settingsModal").classList.add("open");
+};
+$("saveSettings").onclick = ()=>{
+  const p = parseInt($("setPause").value,10), b = parseInt($("setBlock").value,10);
+  if (p>=15 && p<=600) state.settings.pauseSec = p;
+  if (b>=3 && b<=50) state.settings.shotsPerBlock = b;
+  $("settingsModal").classList.remove("open");
+  persist();
+  toast("Settings saved");
+};
+$("closeSettings").onclick = ()=> $("settingsModal").classList.remove("open");
+
+/* ---------------- Backup: share + restore ---------------- */
+$("shareBtn").onclick = async ()=>{
+  const payload = JSON.stringify(state);
+  try {
+    if (navigator.share){
+      await navigator.share({ title:"FlowCode backup", text: payload });
+    } else {
+      await navigator.clipboard.writeText(payload);
+      toast("Copied to clipboard");
+    }
+  } catch(e){ /* user cancelled share sheet */ }
+};
+$("restoreBtn").onclick = ()=>{ $("restoreText").value=""; $("restoreModal").classList.add("open"); };
+$("closeRestore").onclick = ()=> $("restoreModal").classList.remove("open");
+$("doRestore").onclick = ()=>{
+  try {
+    const s = JSON.parse($("restoreText").value.trim());
+    if (!s || !Array.isArray(s.sessions)) throw new Error("bad shape");
+    state = s;
+    $("restoreModal").classList.remove("open");
+    persist();
+    toast("Backup restored");
+  } catch(e){
+    toast("That paste isn't a valid backup");
+  }
+};
+
+/* ---------------- Render ---------------- */
+function render(){
+  const sess = activeSession();
+  $("noSession").style.display = sess ? "none" : "block";
+  $("activeSession").style.display = sess ? "block" : "none";
+
+  if (sess){
+    const block = currentBlock(sess);
+    const bb = $("blockBanner");
+    bb.className = "block-banner " + block;
+    $("blockName").textContent = block==="routine" ? "Routine reps" : "Pressure sim";
+    const inBlock = block==="routine"
+      ? sess.shots.length + 1
+      : sess.shots.length - state.settings.shotsPerBlock + 1;
+    $("blockCount").textContent = `${inBlock} / ${state.settings.shotsPerBlock}`;
+    $("fairwayWrap").style.display = block==="pressure" ? "block" : "none";
+
+    const st = sessionStats(sess);
+    $("stShots").textContent = st.n;
+    $("stStack").textContent = st.pct===null ? "\u2013" : st.pct + "%";
+    $("stMushin").textContent = st.mAvg ?? "\u2013";
+    $("stStreak").textContent = st.best;
+    updateLogBtn();
+  } else {
+    const done = state.sessions.filter(s=>s.endedAt);
+    if (done.length){
+      const last = done[done.length-1];
+      const st = sessionStats(last);
+      $("lastSummary").className = "";
+      $("lastSummary").innerHTML =
+        `<div class="row"><span>${fmtDate(last.startedAt)}</span>
+         <span>${st.n} shots &middot; ${st.pct??0}% Stack &middot; ${st.mAvg??"\u2013"} Mushin &middot; streak ${st.best}</span></div>`;
+    }
+  }
+
+  // Drill history (all sessions, newest first)
+  const drills = state.sessions.flatMap(s=>s.drills).sort((a,b)=>b.t-a.t).slice(0,12);
+  const dl = $("drillList");
+  if (drills.length){
+    dl.className = "";
+    dl.innerHTML = drills.map(d=>
+      `<div class="row"><span>${fmtDate(d.t)}</span><span>${fmtClock(d.durationSec)}</span></div>`).join("");
+  } else { dl.className = "empty"; dl.textContent = "No drills yet."; }
+
+  // Session history
+  const done = state.sessions.filter(s=>s.endedAt).slice(-8).reverse();
+  const slEl = $("sessionList");
+  if (done.length){
+    slEl.className = "";
+    slEl.innerHTML = done.map(s=>{
+      const st = sessionStats(s);
+      return `<div class="row"><span>${fmtDate(s.startedAt)}</span>
+        <span class="sub">${st.n} shots &middot; ${st.pct??0}% &middot; M ${st.mAvg??"\u2013"}</span></div>`;
+    }).join("");
+  } else { slEl.className = "empty"; slEl.textContent = "Nothing here yet."; }
+}
+
+/* ---------------- Firebase cloud sync (optional) ---------------- */
+let pushTimer = null, db = null, uid = null, fs = null;
+function schedulePush(){
+  if (!db || !uid) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushToCloud, 1500);
+}
+async function pushToCloud(){
+  if (!db || !uid) return;
+  try {
+    await fs.setDoc(fs.doc(db, "users", uid), { data: JSON.stringify(state), updatedAt: state.updatedAt });
+    setChip(true, "Synced");
+  } catch(e){ setChip(true, "Sync err"); }
+}
+function setChip(on, label){
+  const c = $("authChip");
+  c.className = "chip" + (on ? " on" : "");
+  c.textContent = label;
+}
+
+const configured = !Object.values(firebaseConfig).some(v => String(v).startsWith("PASTE_"));
+if (!configured){
+  setChip(false, "Cloud off");
+  $("authChip").onclick = ()=> toast("Add Firebase config to enable sync");
+} else {
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } =
+      await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+    fs = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    db = fs.getFirestore(app);
+
+    onAuthStateChanged(auth, async user=>{
+      if (user){
+        uid = user.uid;
+        setChip(true, user.displayName ? user.displayName.split(" ")[0] : "Signed in");
+        // Last-write-wins merge on sign-in
+        try {
+          const snap = await fs.getDoc(fs.doc(db, "users", uid));
+          if (snap.exists()){
+            const remote = snap.data();
+            if (remote.updatedAt > state.updatedAt && remote.data){
+              state = JSON.parse(remote.data);
+              const raw = JSON.stringify(state);
+              localStorage.setItem(K1, raw); localStorage.setItem(K2, raw);
+              render();
+              toast("Pulled newer data from cloud");
+            } else {
+              pushToCloud();
+            }
+          } else { pushToCloud(); }
+        } catch(e){ setChip(true, "Sync err"); }
+        $("authChip").onclick = ()=>{ if (confirm("Sign out of cloud sync?")) signOut(auth); };
+      } else {
+        uid = null;
+        setChip(false, "Sign in");
+        $("authChip").onclick = ()=> signInWithPopup(auth, new GoogleAuthProvider()).catch(()=>toast("Sign-in cancelled"));
+      }
+    });
+  } catch(e){
+    setChip(false, "Cloud off");
+  }
+}
+
+render();
+</script>
+</body>
+</html>
