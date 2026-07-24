@@ -30,11 +30,11 @@
   }
   /* ---- Creed banner ---- */
   .creed{
-    background:var(--green-deep);color:#F2F7F3;
+    background:var(--card);border-bottom:1.5px solid var(--line);
     padding:14px 18px;text-align:center;
   }
-  .creed .line1{font-weight:700;font-size:15px;letter-spacing:.01em}
-  .creed .line2{font-size:13px;opacity:.75;font-style:italic;margin-top:3px}
+  .creed .line1{font-weight:600;font-style:italic;font-size:15px;color:#E0660A;letter-spacing:.01em}
+  .creed .line2{font-size:22px;font-weight:800;color:#1488C2;margin-top:4px;letter-spacing:-.01em}
   /* ---- Header ---- */
   header{
     display:flex;align-items:center;justify-content:space-between;
@@ -66,8 +66,9 @@
     display:flex;justify-content:space-between;align-items:center;
     font-weight:800;font-size:16px;
   }
-  .block-banner.routine{background:var(--green-soft);color:var(--green-deep);border:1.5px solid var(--green)}
-  .block-banner.pressure{background:var(--amber-soft);color:var(--amber);border:1.5px solid var(--amber)}
+  .block-banner.routine{background:#1E3A8A;color:#fff}
+  .block-banner.pressure{background:#C0392B;color:#fff}
+  .block-banner .info{opacity:.8;font-weight:600;font-size:14px;margin-left:8px}
   .block-banner .count{font-variant-numeric:tabular-nums}
   /* ---- Presence timer ---- */
   .presence{
@@ -174,7 +175,7 @@
 
   <div id="activeSession" style="display:none">
     <div class="block-banner routine" id="blockBanner">
-      <span id="blockName">Routine reps</span>
+      <span><span id="blockName">Routine reps</span><span class="info">&#9432;</span></span>
       <span class="count" id="blockCount">1 / 10</span>
     </div>
 
@@ -210,7 +211,7 @@
         </div>
       </div>
       <p class="lbl">Mind note</p>
-      <input type="text" id="noteInput" maxlength="20" placeholder="20 chars max" autocomplete="off">
+      <input type="text" id="noteInput" maxlength="20" placeholder="20 chars max" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <button class="big" id="logBtn" disabled>Log shot</button>
       <button class="linkbtn" id="endBtn">End session</button>
     </div>
@@ -218,6 +219,11 @@
 
   <div class="card">
     <h2>Circle drills</h2>
+    <div class="stats" id="drillStats" style="display:none;margin-bottom:10px">
+      <div class="stat"><div class="v" id="dCount">0</div><div class="l">Drills</div></div>
+      <div class="stat"><div class="v" id="dFast">&ndash;</div><div class="l">Fastest</div></div>
+      <div class="stat"><div class="v" id="dAvg">&ndash;</div><div class="l">Average</div></div>
+    </div>
     <div id="drillList" class="empty">No drills yet.</div>
   </div>
 
@@ -290,15 +296,18 @@ const firebaseConfig = {
 /* ---------------- State + redundant persistence ---------------- */
 const K1 = "flowtracker_v1";
 const K2 = "flowtracker_v1_backup";
+const K3 = "flowtracker_v1_backup2";
+const KEYS = [K1, K2, K3];
 
 const defaultState = () => ({
   settings: { pauseSec: 120, shotsPerBlock: 10 },
   sessions: [],
+  activeDrill: null,
   updatedAt: 0
 });
 
 function loadState(){
-  for (const k of [K1, K2]){
+  for (const k of KEYS){
     try {
       const raw = localStorage.getItem(k);
       if (raw){
@@ -315,8 +324,7 @@ let state = loadState();
 function persist(){
   state.updatedAt = Date.now();
   const raw = JSON.stringify(state);
-  try { localStorage.setItem(K1, raw); } catch(e){}
-  try { localStorage.setItem(K2, raw); } catch(e){}
+  for (const k of KEYS){ try { localStorage.setItem(k, raw); } catch(e){} }
   schedulePush();
   render();
 }
@@ -374,6 +382,13 @@ function updateLogBtn(){
 }
 
 /* ---------------- Session flow ---------------- */
+$("blockBanner").onclick = ()=>{
+  const sess = activeSession(); if(!sess) return;
+  alert(currentBlock(sess)==="routine"
+    ? "ROUTINE REPS — full stack on every ball. Image locked, one cue per phase, treat each as a real tee shot. Ignore where it lands."
+    : "PRESSURE SIM — real stakes. Fairway or it doesn't count. Miss the fairway and you owe the Circle Drill: 8 straight 3-footers, miss one and the circle restarts.");
+};
+
 $("startBtn").onclick = ()=>{
   state.sessions.push({ id: Date.now(), startedAt: Date.now(), endedAt: null, shots: [], drills: [] });
   clearSelections();
@@ -427,23 +442,32 @@ setInterval(()=>{
 }, 500);
 
 /* ---------------- Circle drill ---------------- */
-let drillStart = null, drillInt = null;
-function openDrill(){
-  drillStart = Date.now();
+let drillInt = null;
+function openDrill(startedAt){
+  if (!state.activeDrill){
+    state.activeDrill = { startedAt: startedAt || Date.now() };
+    persist();
+  }
   $("drillModal").classList.add("open");
+  clearInterval(drillInt);
   drillInt = setInterval(()=>{
-    $("drillTimer").textContent = fmtClock(Math.floor((Date.now()-drillStart)/1000));
+    if (!state.activeDrill) return;
+    $("drillTimer").textContent = fmtClock(Math.floor((Date.now()-state.activeDrill.startedAt)/1000));
   }, 300);
 }
 $("drillDone").onclick = ()=>{
   clearInterval(drillInt);
-  const dur = Math.floor((Date.now()-drillStart)/1000);
+  if (!state.activeDrill) return;
+  const dur = Math.floor((Date.now()-state.activeDrill.startedAt)/1000);
   const sess = activeSession();
   (sess || state.sessions[state.sessions.length-1] || {drills:[]}).drills.push({ t: Date.now(), durationSec: dur });
+  state.activeDrill = null;
   $("drillModal").classList.remove("open");
   persist();
   toast(`Circle closed — ${fmtClock(dur)}`);
 };
+// A drill in progress survives a reload — reopen it
+if (state.activeDrill) openDrill(state.activeDrill.startedAt);
 
 /* ---------------- Settings ---------------- */
 $("settingsBtn").onclick = ()=>{
@@ -523,14 +547,22 @@ function render(){
     }
   }
 
-  // Drill history (all sessions, newest first)
-  const drills = state.sessions.flatMap(s=>s.drills).sort((a,b)=>b.t-a.t).slice(0,12);
+  // Drill stats + history (all sessions, newest first)
+  const allDrills = state.sessions.flatMap(s=>s.drills);
+  const drills = [...allDrills].sort((a,b)=>b.t-a.t).slice(0,8);
   const dl = $("drillList");
-  if (drills.length){
+  if (allDrills.length){
+    $("drillStats").style.display = "flex";
+    $("dCount").textContent = allDrills.length;
+    $("dFast").textContent = fmtClock(Math.min(...allDrills.map(d=>d.durationSec)));
+    $("dAvg").textContent = fmtClock(Math.round(allDrills.reduce((a,d)=>a+d.durationSec,0)/allDrills.length));
     dl.className = "";
     dl.innerHTML = drills.map(d=>
       `<div class="row"><span>${fmtDate(d.t)}</span><span>${fmtClock(d.durationSec)}</span></div>`).join("");
-  } else { dl.className = "empty"; dl.textContent = "No drills yet."; }
+  } else {
+    $("drillStats").style.display = "none";
+    dl.className = "empty"; dl.textContent = "No drills yet.";
+  }
 
   // Session history
   const done = state.sessions.filter(s=>s.endedAt).slice(-8).reverse();
