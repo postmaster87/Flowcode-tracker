@@ -589,7 +589,7 @@ async function pushToCloud(){
   try {
     await fs.setDoc(fs.doc(db, "users", uid), { data: JSON.stringify(state), updatedAt: state.updatedAt });
     setChip(true, "Synced");
-  } catch(e){ setChip(true, "Sync err"); }
+  } catch(e){ console.error("[sync push]", e); setChip(true, "Sync err"); }
 }
 function setChip(on, label){
   const c = $("authChip");
@@ -604,12 +604,28 @@ if (!configured){
 } else {
   try {
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } =
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } =
       await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
     fs = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     db = fs.getFirestore(app);
+
+    const authErr = e=>{ console.error("[auth]", e); toast("Sign-in failed: " + ((e && (e.code||e.message)) || "unknown")); };
+    // Popups are unreliable on mobile Chrome and break in home-screen (standalone) launches; redirect works there.
+    const useRedirect = /Android|iPhone|iPad/i.test(navigator.userAgent)
+      || matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    const startSignIn = ()=>{
+      const p = new GoogleAuthProvider();
+      if (useRedirect) return signInWithRedirect(auth, p).catch(authErr);
+      signInWithPopup(auth, p).catch(e=>{
+        const c = e && e.code;
+        if (c==="auth/popup-blocked" || c==="auth/popup-closed-by-user" || c==="auth/cancelled-popup-request" || c==="auth/operation-not-supported-in-this-environment")
+          return signInWithRedirect(auth, p).catch(authErr);
+        authErr(e);
+      });
+    };
+    getRedirectResult(auth).catch(authErr);
 
     onAuthStateChanged(auth, async user=>{
       if (user){
@@ -630,12 +646,12 @@ if (!configured){
               pushToCloud();
             }
           } else { pushToCloud(); }
-        } catch(e){ setChip(true, "Sync err"); }
+        } catch(e){ console.error("[sync pull]", e); setChip(true, "Sync err"); }
         $("authChip").onclick = ()=>{ if (confirm("Sign out of cloud sync?")) signOut(auth); };
       } else {
         uid = null;
         setChip(false, "Sign in");
-        $("authChip").onclick = ()=> signInWithPopup(auth, new GoogleAuthProvider()).catch(()=>toast("Sign-in cancelled"));
+        $("authChip").onclick = startSignIn;
       }
     });
   } catch(e){
