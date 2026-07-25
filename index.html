@@ -612,16 +612,16 @@ if (!configured){
     db = fs.getFirestore(app);
 
     const authErr = e=>{ console.error("[auth]", e); toast("Sign-in failed: " + ((e && (e.code||e.message)) || "unknown")); };
-    // Popups are unreliable on mobile Chrome and break in home-screen (standalone) launches; redirect works there.
-    const useRedirect = /Android|iPhone|iPad/i.test(navigator.userAgent)
-      || matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    // Popup first everywhere: this app is served cross-origin from authDomain, and Chrome's
+    // third-party storage partitioning breaks signInWithRedirect. Redirect stays as fallback.
     const startSignIn = ()=>{
       const p = new GoogleAuthProvider();
-      if (useRedirect) return signInWithRedirect(auth, p).catch(authErr);
       signInWithPopup(auth, p).catch(e=>{
         const c = e && e.code;
-        if (c==="auth/popup-blocked" || c==="auth/popup-closed-by-user" || c==="auth/cancelled-popup-request" || c==="auth/operation-not-supported-in-this-environment")
+        // Blocked or unsupported: retry via redirect. Closed/cancelled: the user meant it, so don't bounce them.
+        if (c==="auth/popup-blocked" || c==="auth/operation-not-supported-in-this-environment")
           return signInWithRedirect(auth, p).catch(authErr);
+        if (c==="auth/popup-closed-by-user" || c==="auth/cancelled-popup-request") return toast("Sign-in cancelled");
         authErr(e);
       });
     };
