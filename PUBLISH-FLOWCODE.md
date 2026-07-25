@@ -38,9 +38,18 @@ Then you:
 
 ## 4. Verify + wrap up
 
-- [ ] **Matt to do:** open the live URL on the S26 → Sign in with Google → chip shows name → log a test shot → check Firestore console for `users/<uid>` → incognito window without sign-in loads nothing from cloud
-- [ ] **Matt to confirm in console:** Authentication → Google enabled + support email set; Authorized domains includes `postmaster87.github.io`; Firestore rules published as the own-document pattern from `flow-tracker-setup.md`
+- [x] Verified end-to-end: signed in on laptop, logged a test entry, then signed in on the S26 and the phone **pulled the laptop's data from the cloud**. Auth + rules + sync all confirmed working.
+- [x] Firebase console setup confirmed working: Google provider enabled with support email, `postmaster87.github.io` in Authorized domains, Firestore rules published (own-document pattern)
 - [ ] Remind Matt: on the phone, Add to Home Screen from the live URL and ALWAYS launch from that icon (downloaded-file launches get separate localStorage — this caused data loss before)
+
+### Auth troubleshooting log (for future reference)
+
+Two real bugs surfaced during setup, both now fixed in `index.html`:
+
+1. **`signInWithPopup`'s catch reported "Sign-in cancelled" for every failure**, hiding the real error code. The actual cause was `auth/operation-not-allowed` (Google provider not yet enabled). Errors now surface `e.code` and log to console.
+2. **`signInWithRedirect` does not work for this app.** The app is served from `postmaster87.github.io` while `authDomain` is `flowcode-tracker.firebaseapp.com` — different origins, so Chrome's third-party storage partitioning breaks the redirect handoff. **Popup is the working path on both desktop and mobile**; redirect remains only as a fallback for genuine popup blocks. Don't "fix" mobile by switching back to redirect.
+
+Also note: phone can serve a stale cached copy after a push (no service worker, but normal HTTP cache applies). If the phone behaves differently from the laptop, hard-refresh in Chrome before debugging the code.
 - [x] Update checkboxes in this file, commit `publish flowcode tracker`, push
 
 ## Notes
