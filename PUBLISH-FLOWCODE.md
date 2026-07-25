@@ -40,7 +40,7 @@ Then you:
 
 - [x] Verified end-to-end: signed in on laptop, logged a test entry, then signed in on the S26 and the phone **pulled the laptop's data from the cloud**. Auth + rules + sync all confirmed working.
 - [x] Firebase console setup confirmed working: Google provider enabled with support email, `postmaster87.github.io` in Authorized domains, Firestore rules published (own-document pattern)
-- [ ] Remind Matt: on the phone, Add to Home Screen from the live URL and ALWAYS launch from that icon (downloaded-file launches get separate localStorage — this caused data loss before)
+- [x] Added to S26 home screen from the live URL. ALWAYS launch from that icon (downloaded-file launches get separate localStorage — this caused data loss before)
 
 ### Auth troubleshooting log (for future reference)
 
