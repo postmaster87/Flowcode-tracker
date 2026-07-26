@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 <meta name="theme-color" content="#123F2A">
 <title>FlowCode Range Tracker</title>
 <style>
@@ -31,10 +31,10 @@
   /* ---- Creed banner ---- */
   .creed{
     background:var(--card);border-bottom:1.5px solid var(--line);
-    padding:14px 18px;text-align:center;
+    padding:16px 18px 18px;text-align:center;
   }
-  .creed .line1{font-weight:600;font-style:italic;font-size:15px;color:#E0660A;letter-spacing:.01em}
-  .creed .line2{font-size:22px;font-weight:800;color:#1488C2;margin-top:4px;letter-spacing:-.01em}
+  .creed .line1{font-weight:600;font-style:italic;font-size:19px;color:#E0660A;letter-spacing:.01em;line-height:1.3}
+  .creed .line2{font-size:31px;font-weight:800;color:#1488C2;margin-top:7px;letter-spacing:-.015em;line-height:1.15}
   /* ---- Header ---- */
   header{
     display:flex;align-items:center;justify-content:space-between;
@@ -51,6 +51,11 @@
   .iconbtn{
     border:1.5px solid var(--line);background:var(--card);border-radius:999px;
     width:38px;height:38px;font-size:17px;display:flex;align-items:center;justify-content:center;
+  }
+  /* ---- Demo banner ---- */
+  .demo-banner{
+    background:#5B21B6;color:#fff;text-align:center;font-weight:800;
+    padding:9px;font-size:14px;letter-spacing:.1em;
   }
   /* ---- Cards ---- */
   main{padding:6px 14px}
@@ -70,6 +75,48 @@
   .block-banner.pressure{background:#C0392B;color:#fff}
   .block-banner .info{opacity:.8;font-weight:600;font-size:14px;margin-left:8px}
   .block-banner .count{font-variant-numeric:tabular-nums}
+  /* ---- Hole card (Range Nine) ---- */
+  .hole-card{
+    background:#C0392B;color:#fff;border-radius:var(--radius);
+    padding:14px 16px;margin-bottom:14px;
+  }
+  .hole-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .hole-n{font-size:22px;font-weight:800;letter-spacing:-.01em}
+  .hole-n .nm{font-weight:600;opacity:.92;font-size:17px;margin-left:7px}
+  .hole-meta{font-size:14px;opacity:.9;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hole-line{font-size:14px;opacity:.94;margin-top:8px;line-height:1.35}
+  .hole-clubs{font-size:14px;font-weight:700;margin-top:8px;opacity:.96}
+  .hole-clubs button{
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);color:#fff;
+    border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700;font-family:inherit;margin-left:6px;
+  }
+  .hole-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:11px}
+  .tee-toggle{display:flex;gap:6px}
+  .tee-toggle button{
+    border-radius:999px;padding:7px 15px;font-size:14px;font-weight:800;font-family:inherit;
+    border:2px solid rgba(255,255,255,.55);background:transparent;color:#fff;
+  }
+  .tee-toggle button.on-gold{background:#D4A017;border-color:#D4A017;color:#3A2A00}
+  .tee-toggle button.on-blue{background:#1488C2;border-color:#1488C2;color:#fff}
+  .hole-slot{font-size:14px;font-weight:800;opacity:.95;font-variant-numeric:tabular-nums}
+  /* ---- Debt ---- */
+  .debt{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    border-radius:10px;padding:10px 14px;margin-bottom:14px;font-weight:800;font-size:15px;
+    background:var(--amber-soft);color:#7A3E06;border:1.5px solid #E9C489;
+  }
+  .debt.clear{background:var(--green-soft);color:var(--green-deep);border-color:#BBD8C6}
+  .debt button{
+    background:var(--amber);color:#fff;border:none;border-radius:999px;
+    padding:8px 14px;font-size:14px;font-weight:800;font-family:inherit;
+  }
+  /* ---- Staging ---- */
+  .stage-row{display:flex;gap:8px;margin-bottom:14px}
+  .stage-row button{
+    flex:1;padding:11px 0;font-size:14px;font-weight:800;border-radius:10px;font-family:inherit;
+    border:2px solid var(--line);background:var(--card);color:var(--muted);
+  }
+  .stage-row button.on{background:var(--green);border-color:var(--green);color:#fff}
   /* ---- Presence timer ---- */
   .presence{
     text-align:center;padding:10px;border-radius:10px;margin-bottom:14px;
@@ -86,37 +133,62 @@
   .seg{display:flex;gap:8px;margin-bottom:12px}
   .seg button{
     flex:1;padding:16px 0;font-size:18px;font-weight:800;border-radius:12px;
-    border:2px solid var(--line);background:var(--card);color:var(--ink);
+    border:2px solid var(--line);background:var(--card);color:var(--ink);font-family:inherit;
   }
   .seg button.sel-y{background:var(--green);border-color:var(--green);color:#fff}
   .seg button.sel-n{background:var(--danger);border-color:var(--danger);color:#fff}
   .seg button.sel-g{background:var(--green);border-color:var(--green);color:#fff}
   .seg button.sel-a{background:var(--amber);border-color:var(--amber);color:#fff}
   .seg.mushin button{padding:14px 0;font-size:17px}
+  .seg.ten{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .seg.ten button{padding:14px 0;font-size:17px}
+  .seg.ten button.sel-calm{background:var(--green);border-color:var(--green);color:#fff}
+  .seg.ten button.sel-hot{background:var(--amber);border-color:var(--amber);color:#fff}
   .lbl{font-size:13px;font-weight:700;color:var(--muted);margin:0 0 6px;
     text-transform:uppercase;letter-spacing:.06em}
-  input[type=text]{
+  .lbl .hint{text-transform:none;letter-spacing:0;font-weight:600;color:var(--amber)}
+  input[type=text],input[type=number]{
     width:100%;padding:12px;font-size:16px;border:1.5px solid var(--line);
     border-radius:10px;background:var(--card);color:var(--ink);font-family:inherit;
   }
-  input[type=number]{
+  select{
     width:100%;padding:12px;font-size:16px;border:1.5px solid var(--line);
     border-radius:10px;background:var(--card);color:var(--ink);font-family:inherit;
   }
   .big{
     width:100%;padding:18px 0;font-size:19px;font-weight:800;border-radius:14px;
-    border:none;background:var(--green);color:#fff;margin-top:14px;
+    border:none;background:var(--green);color:#fff;margin-top:14px;font-family:inherit;
   }
   .big:disabled{opacity:.45}
   .big.secondary{background:var(--card);color:var(--green-deep);border:2px solid var(--green)}
   .big.quiet{background:var(--paper);color:var(--muted);border:1.5px solid var(--line);font-weight:700;font-size:16px;padding:13px 0}
+  .big.danger{background:var(--danger);color:#fff}
+  .big.demo{background:#5B21B6;color:#fff}
   .linkbtn{background:none;border:none;color:var(--muted);font-size:14px;
     text-decoration:underline;padding:10px;display:block;margin:6px auto 0;font-family:inherit}
   /* ---- Lists ---- */
-  .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px;gap:10px}
   .row:last-child{border-bottom:none}
   .row .sub{color:var(--muted);font-size:13px}
   .empty{color:var(--muted);font-size:14px;text-align:center;padding:8px 0}
+  .shot-row{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:10px 0;border-bottom:1px solid var(--line);font-size:15px;width:100%;
+    background:none;border-left:none;border-right:none;border-top:none;
+    text-align:left;font-family:inherit;color:var(--ink);
+  }
+  .shot-row .who{font-weight:700;font-variant-numeric:tabular-nums}
+  .shot-row .det{color:var(--muted);font-size:13px;text-align:right;white-space:nowrap}
+  .shot-row .tag{font-size:11px;font-weight:800;color:var(--amber);letter-spacing:.04em}
+  .misentry-head{
+    font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--danger);margin:14px 0 2px;padding-top:10px;border-top:2px solid var(--line);
+  }
+  .shot-row.flagged .who,.shot-row.flagged .det{text-decoration:line-through;opacity:.6}
+  .del-btn{
+    background:none;border:none;color:var(--danger);font-size:13px;font-weight:800;
+    font-family:inherit;padding:6px 8px;
+  }
   /* ---- Modal ---- */
   .modal-bg{
     position:fixed;inset:0;background:rgba(10,20,14,.55);
@@ -128,6 +200,7 @@
     padding:22px 18px 30px;max-height:88vh;overflow-y:auto;
   }
   .modal h3{margin:0 0 14px;font-size:18px;font-weight:800}
+  .modal p.note{font-size:14px;color:var(--muted);margin-top:0}
   textarea{
     width:100%;min-height:120px;padding:12px;font-size:14px;font-family:monospace;
     border:1.5px solid var(--line);border-radius:10px;
@@ -145,14 +218,21 @@
     font-size:14px;font-weight:700;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99;
   }
   .toast.show{opacity:1}
+  /* ---- Nine card (summary) ---- */
+  .ninecard .row span:first-child{font-weight:700}
+  .res-birdie{color:var(--green);font-weight:800}
+  .res-par{color:var(--muted);font-weight:700}
+  .res-bogey{color:var(--danger);font-weight:800}
   @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
 </style>
 </head>
 <body>
 
+<div class="demo-banner" id="demoBanner" style="display:none">DEMO &mdash; NOTHING IS SAVED</div>
+
 <div class="creed">
   <div class="line1">See it, feel yourself, quiet the mind, and let it go.</div>
-  <div class="line2">The cloud doesn't change the sky.</div>
+  <div class="line2">The Clouds Cannot Change The Sky.</div>
 </div>
 
 <header>
@@ -164,9 +244,11 @@
 </header>
 
 <main>
-  <!-- Session state -->
+  <!-- No active session -->
   <div id="noSession">
-    <button class="big" id="startBtn">Start session</button>
+    <button class="big" id="startClassicBtn">Start classic session</button>
+    <button class="big secondary" id="startNineBtn">Play Range Nine</button>
+    <button class="big demo" id="startDemoBtn">Demo (nothing saved)</button>
     <div class="card" style="margin-top:14px" id="lastSummaryCard">
       <h2>Last session</h2>
       <div id="lastSummary" class="empty">No sessions yet. Start one at the range.</div>
@@ -174,25 +256,60 @@
   </div>
 
   <div id="activeSession" style="display:none">
+    <!-- Classic block banner -->
     <div class="block-banner routine" id="blockBanner">
       <span><span id="blockName">Routine reps</span><span class="info">&#9432;</span></span>
       <span class="count" id="blockCount">1 / 10</span>
     </div>
 
-    <div class="presence ready" id="presence">Present. Log your next shot.</div>
-
-    <div class="card">
-      <h2>Session</h2>
-      <div class="stats">
-        <div class="stat"><div class="v" id="stShots">0</div><div class="l">Shots</div></div>
-        <div class="stat"><div class="v" id="stStack">&ndash;</div><div class="l">Stack Y</div></div>
-        <div class="stat"><div class="v" id="stMushin">&ndash;</div><div class="l">Mushin</div></div>
-        <div class="stat"><div class="v" id="stStreak">0</div><div class="l">Streak</div></div>
+    <!-- Range Nine hole card -->
+    <div class="hole-card" id="holeCard" style="display:none">
+      <div class="hole-top">
+        <div class="hole-n"><span id="hcNum">Hole 10</span><span class="nm" id="hcName">Punch Bowl</span></div>
+        <div class="hole-meta" id="hcMeta">Par 5 &middot; 473</div>
+      </div>
+      <div class="hole-line" id="hcLine"></div>
+      <div class="hole-clubs" id="hcClubs"></div>
+      <div class="hole-row">
+        <div class="tee-toggle" id="teeToggle">
+          <button data-v="gold">Gold</button>
+          <button data-v="blue">Blue</button>
+        </div>
+        <div class="hole-slot" id="hcSlot">Shot 1 of 2</div>
       </div>
     </div>
 
+    <!-- Circle debt -->
+    <div class="debt clear" id="debtBar" style="display:none">
+      <span id="debtText">Circles owed 0 &middot; paid 0</span>
+      <button id="payDebtBtn" style="display:none">Start drill</button>
+    </div>
+
+    <!-- Staging state -->
+    <div class="stage-row" id="stageRow" style="display:none">
+      <button data-v="staged" id="stagedBtn">Consequence staged</button>
+      <button data-v="packed" id="packedBtn">Packed up</button>
+    </div>
+
+    <div class="presence ready" id="presence">Present. Log your next shot.</div>
+
+    <!-- Entry card sits above the log so logging never requires scrolling -->
     <div class="card">
       <h2>Log shot</h2>
+      <p class="lbl">Arousal before the shot <span class="hint" id="arousalHint"></span></p>
+      <div class="seg ten" id="arousalSeg">
+        <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button>
+        <button data-v="4">4</button><button data-v="5">5</button><button data-v="6">6</button>
+        <button data-v="7">7</button><button data-v="8">8</button><button data-v="9">9</button>
+        <button data-v="10">10</button>
+      </div>
+      <div id="calmedWrap" style="display:none">
+        <p class="lbl">Calmed down before the stack?</p>
+        <div class="seg" id="calmedSeg">
+          <button data-v="Y">Yes</button>
+          <button data-v="N">No</button>
+        </div>
+      </div>
       <p class="lbl">Stack &mdash; full routine?</p>
       <div class="seg" id="stackSeg">
         <button data-v="Y">Yes</button>
@@ -204,7 +321,7 @@
         <button data-v="4">4</button><button data-v="5">5</button>
       </div>
       <div id="fairwayWrap" style="display:none">
-        <p class="lbl">Fairway (pressure)</p>
+        <p class="lbl" id="fairwayLbl">Fairway (pressure)</p>
         <div class="seg" id="fairwaySeg">
           <button data-v="hit">Hit</button>
           <button data-v="miss">Miss</button>
@@ -214,6 +331,30 @@
       <input type="text" id="noteInput" maxlength="20" placeholder="20 chars max" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <button class="big" id="logBtn" disabled>Log shot</button>
       <button class="linkbtn" id="endBtn">End session</button>
+    </div>
+
+    <div class="card">
+      <h2>Session</h2>
+      <div class="stats">
+        <div class="stat"><div class="v" id="stShots">0</div><div class="l">Shots</div></div>
+        <div class="stat"><div class="v" id="stStack">&ndash;</div><div class="l">Stack Y</div></div>
+        <div class="stat"><div class="v" id="stMushin">&ndash;</div><div class="l">Mushin</div></div>
+        <div class="stat"><div class="v" id="stStreak">0</div><div class="l">Streak</div></div>
+      </div>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><div class="v" id="stArousal">&ndash;</div><div class="l">Avg arousal</div></div>
+        <div class="stat"><div class="v" id="stCalmed">&ndash;</div><div class="l">Calmed 7+</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Session log</h2>
+      <div id="shotLog" class="empty">No shots yet.</div>
+    </div>
+
+    <div class="card" id="nineCardWrap" style="display:none">
+      <h2>The card</h2>
+      <div id="nineCard" class="ninecard"></div>
     </div>
   </div>
 
@@ -243,16 +384,42 @@
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
     <h3>Settings</h3>
+    <p class="note">Adjustments are made deliberately, between sessions &mdash; never mid-pressure.</p>
     <div class="field">
-      <p class="lbl">Presence pause (seconds)</p>
+      <p class="lbl">Pressure pause &mdash; seconds (default 120)</p>
       <input type="number" id="setPause" min="15" max="600" inputmode="numeric">
     </div>
     <div class="field">
-      <p class="lbl">Shots per block</p>
+      <p class="lbl">Shots per block &mdash; classic</p>
       <input type="number" id="setBlock" min="3" max="50" inputmode="numeric">
+    </div>
+    <div class="field">
+      <p class="lbl">Routine shots &mdash; Range Nine</p>
+      <input type="number" id="setNineRoutine" min="1" max="30" inputmode="numeric">
     </div>
     <button class="big" id="saveSettings">Save settings</button>
     <button class="big quiet" id="closeSettings">Close</button>
+  </div>
+</div>
+
+<!-- Range Nine setup modal -->
+<div class="modal-bg" id="nineModal">
+  <div class="modal">
+    <h3>Play Range Nine</h3>
+    <div class="field">
+      <p class="lbl">Card</p>
+      <select id="nineCourse"></select>
+    </div>
+    <div class="field">
+      <p class="lbl">Default tee</p>
+      <div class="seg" id="nineTeeSeg">
+        <button data-v="gold">Gold</button>
+        <button data-v="blue">Blue</button>
+      </div>
+    </div>
+    <p class="note">Tee is switchable per shot on the hole card &mdash; declare it before you hit.</p>
+    <button class="big" id="nineStart">Start the nine</button>
+    <button class="big quiet" id="nineCancel">Cancel</button>
   </div>
 </div>
 
@@ -260,7 +427,7 @@
 <div class="modal-bg" id="restoreModal">
   <div class="modal">
     <h3>Restore from paste</h3>
-    <p style="font-size:14px;color:var(--muted);margin-top:0">Paste a backup you shared earlier. This replaces everything on this device.</p>
+    <p class="note">Paste a backup you shared earlier. This replaces everything on this device.</p>
     <textarea id="restoreText" placeholder='{"sessions": ...}'></textarea>
     <button class="big" id="doRestore">Restore data</button>
     <button class="big quiet" id="closeRestore">Cancel</button>
@@ -273,7 +440,43 @@
     <h3>Circle Drill</h3>
     <p class="drill-note">8 putts, 3 feet, full circle. All in a row.<br>Miss one &mdash; the circle restarts.</p>
     <div class="drill-timer" id="drillTimer">0:00</div>
-    <button class="big" id="drillDone">Drill complete</button>
+    <div id="drillRunning">
+      <button class="big" id="drillDone">Drill complete</button>
+    </div>
+    <div id="drillDeduct" style="display:none">
+      <p class="note">Raw time is kept. Deduct only the time spent staging balls, not drill time.</p>
+      <div class="field">
+        <p class="lbl">Setup time to deduct (seconds or m:ss)</p>
+        <input type="text" id="setupInput" placeholder="0" inputmode="numeric" autocomplete="off">
+      </div>
+      <button class="big" id="drillSave">Save drill</button>
+    </div>
+  </div>
+</div>
+
+<!-- Shot edit modal -->
+<div class="modal-bg" id="shotModal">
+  <div class="modal">
+    <h3>Fix this shot</h3>
+    <p class="note" id="shotSummary"></p>
+    <p class="note">Stack and Mushin can't be changed &mdash; only where the shot lives.</p>
+    <div class="field">
+      <p class="lbl">Block</p>
+      <div class="seg" id="editBlockSeg">
+        <button data-v="routine">Routine</button>
+        <button data-v="pressure">Pressure</button>
+      </div>
+    </div>
+    <div class="field" id="editHoleWrap" style="display:none">
+      <p class="lbl">Hole</p>
+      <select id="editHole"></select>
+      <p class="lbl" style="margin-top:10px">Shot slot</p>
+      <select id="editSlot"></select>
+    </div>
+    <button class="big" id="shotSaveBtn">Save placement</button>
+    <button class="big quiet" id="shotFlagBtn">Flag as mis-entry</button>
+    <button class="big danger" id="shotDeleteBtn" style="display:none">Delete permanently</button>
+    <button class="big quiet" id="shotCancelBtn">Cancel</button>
   </div>
 </div>
 
@@ -293,6 +496,50 @@ const firebaseConfig = {
   appId: "1:942621882506:web:f71d75b8607401bdb61573"
 };
 
+/* =========================================================
+   COURSE CARDS — Veenker Memorial, from the course's own
+   hole pages (veenkergolf.com/hole-N). Gold + Blue, men's
+   par/HCP. Where a page lists two numbers for a tee the
+   first is taken. Front/back gold totals run slightly hot
+   vs the rated card; the pages are the accepted source.
+   ========================================================= */
+const COURSES = [
+  {
+    courseId: "veenker-back",
+    name: "Veenker Back Nine",
+    par: 36,
+    holes: [
+      {n:10,name:"Punch Bowl",par:5,hcp:6,yds:{gold:473,blue:560},shots:["Driver","Long iron"],line:"Drive left of center. Reachable — make the go/lay-up call behind the ball."},
+      {n:11,name:"Davey Jones",par:3,hcp:14,yds:{gold:134,blue:155},shots:["Short iron"],line:"All carry, usually into wind. Plenty of club."},
+      {n:12,name:"Cotton Woods",par:4,hcp:12,yds:{gold:306,blue:330},shots:["Metal/hybrid","Wedge"],line:"Aim last two trees left; everything kicks right. Right is jail."},
+      {n:13,name:"Oak Ridge",par:3,hcp:16,yds:{gold:144,blue:160},shots:["Short iron"],line:"Must find the dance floor. Everything around it kicks."},
+      {n:14,name:"Walnut Drive",par:4,hcp:10,yds:{gold:397,blue:416},shots:["Driver","Short iron"],line:"Aim the Y tree on the left of the dogleg."},
+      {n:15,name:"Over There",par:4,hcp:8,yds:{gold:386,blue:420},shots:["Metal/hybrid","Mid iron"],line:"~220 around the dogleg, left of the overhanging tree. Plenty of club in."},
+      {n:16,name:"Squaw Creek",par:5,hcp:2,yds:{gold:485,blue:544},shots:["Driver","Long iron/metal"],line:"HCP 2. Left side, accuracy over length. Go/lay-up decided behind the ball."},
+      {n:17,name:"Little Boy",par:3,hcp:18,yds:{gold:180,blue:190},shots:["Mid iron"],line:"42-yard green, three clubs of difference. Pick a pin and commit."},
+      {n:18,name:"Glory Hole",par:5,hcp:4,yds:{gold:521,blue:534},shots:["Driver","Metal"],line:"Down the middle. Don't be short."}
+    ]
+  },
+  {
+    courseId: "veenker-front",
+    name: "Veenker Front Nine",
+    par: 36,
+    holes: [
+      {n:1,name:"The Meadow",par:4,hcp:7,yds:{gold:419,blue:435},shots:[],line:"Green accepts an approach positioned right of center."},
+      {n:2,name:"Plum Valley",par:4,hcp:9,yds:{gold:283,blue:334},shots:[],line:"The chute opens into a nice landing area. Position the tee shot 175–185 out. Second shot is all uphill and carry."},
+      {n:3,name:"Grand Canyon",par:4,hcp:13,yds:{gold:289,blue:333},shots:[],line:"Birdie hole if the tee shot is accurate. From Blue/Gold aim down the cart path. Everything kicks right."},
+      {n:4,name:"Lodge Hole",par:4,hcp:11,yds:{gold:340,blue:349},shots:[],line:"Tee shot left of center. Land the approach short and left and let it kick up — the green breaks severely right."},
+      {n:5,name:"Apple Lane",par:4,hcp:3,yds:{gold:350,blue:402},shots:[],line:"Tee shot right of center, 155–165 out. Anything long is in the pond or a severe downhill lie."},
+      {n:6,name:"Pear Tree",par:3,hcp:15,yds:{gold:185,blue:210},shots:[],line:"Green and landing area are larger than they look. Check the wind on the tops of the trees on No. 5."},
+      {n:7,name:"Big Boy",par:5,hcp:1,yds:{gold:570,blue:590},shots:[],line:"Positioning off the tee is critical — the landing area kicks severely right. Drive ~220 and let it roll to the 250 mark."},
+      {n:8,name:"Road Hole",par:3,hcp:17,yds:{gold:157,blue:181},shots:[],line:"Relief from the tree-lined fairways. Large green — check the pin for club selection. Big bunkers."},
+      /* Hole 9: the course page gives no nickname. "Cross Country" appears in the page text
+         but reads as guidance, not a name — confirm and correct if wrong. */
+      {n:9,name:"Cross Country",par:5,hcp:5,yds:{gold:495,blue:537},shots:[],line:"Cut the corner as much as you dare. The approach is all uphill and carry — use enough club."}
+    ]
+  }
+];
+
 /* ---------------- State + redundant persistence ---------------- */
 const K1 = "flowtracker_v1";
 const K2 = "flowtracker_v1_backup";
@@ -300,8 +547,9 @@ const K3 = "flowtracker_v1_backup2";
 const KEYS = [K1, K2, K3];
 
 const defaultState = () => ({
-  settings: { pauseSec: 120, shotsPerBlock: 10 },
+  settings: { pauseSec: 120, shotsPerBlock: 10, nineRoutine: 7, defaultTee: "gold" },
   sessions: [],
+  courseClubs: {},
   activeDrill: null,
   updatedAt: 0
 });
@@ -312,17 +560,32 @@ function loadState(){
       const raw = localStorage.getItem(k);
       if (raw){
         const s = JSON.parse(raw);
-        if (s && Array.isArray(s.sessions)) return s;
+        if (s && Array.isArray(s.sessions)) return migrate(s);
       }
     } catch(e){ /* corrupt copy — try the other key */ }
   }
   return defaultState();
 }
 
+// Old data predates modes, clubs and the Node 3 fields — fill the gaps, never rewrite values.
+function migrate(s){
+  const d = defaultState();
+  s.settings = Object.assign({}, d.settings, s.settings || {});
+  if (!s.courseClubs) s.courseClubs = {};
+  for (const sess of s.sessions){
+    if (!sess.mode) sess.mode = "classic";
+    if (!Array.isArray(sess.drills)) sess.drills = [];
+    for (const d2 of sess.drills) if (typeof d2.setupSec !== "number") d2.setupSec = 0;
+  }
+  return s;
+}
+
 let state = loadState();
+let demoMode = false, realState = null;
 
 function persist(){
   state.updatedAt = Date.now();
+  if (demoMode){ render(); return; }   // demo never touches storage or the cloud
   const raw = JSON.stringify(state);
   for (const k of KEYS){ try { localStorage.setItem(k, raw); } catch(e){} }
   schedulePush();
@@ -334,51 +597,138 @@ const $ = id => document.getElementById(id);
 const activeSession = () => state.sessions.find(s => !s.endedAt);
 const fmtClock = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
 const fmtDate = t => new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+const fmtTime = t => new Date(t).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
 function toast(msg){
   const t = $("toast"); t.textContent = msg; t.classList.add("show");
   clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2200);
 }
+// Mis-entries are excluded from every stat and every block/hole count, but stay visible in the log.
+const liveShots = sess => sess.shots.filter(s => !s.misEntry);
+const effDrill = d => Math.max(0, (d.durationSec||0) - (d.setupSec||0));
+const shotsNeeded = hole => hole.par === 3 ? 1 : 2;
+
 function sessionStats(sess){
-  const n = sess.shots.length;
-  const ys = sess.shots.filter(x=>x.stack==="Y").length;
-  const mAvg = n ? (sess.shots.reduce((a,x)=>a+x.mushin,0)/n) : 0;
+  const shots = liveShots(sess);
+  const n = shots.length;
+  const ys = shots.filter(x=>x.stack==="Y").length;
+  const mAvg = n ? (shots.reduce((a,x)=>a+x.mushin,0)/n) : 0;
   let best=0, cur=0;
-  for (const x of sess.shots){ cur = x.stack==="Y" ? cur+1 : 0; if (cur>best) best=cur; }
-  return { n, pct: n?Math.round(ys/n*100):null, mAvg: n?mAvg.toFixed(1):null, best };
+  for (const x of shots){ cur = x.stack==="Y" ? cur+1 : 0; if (cur>best) best=cur; }
+  const withA = shots.filter(x=>typeof x.arousal==="number");
+  const aAvg = withA.length ? (withA.reduce((a,x)=>a+x.arousal,0)/withA.length).toFixed(1) : null;
+  const hot = shots.filter(x=>typeof x.arousal==="number" && x.arousal>=7);
+  const calmedPct = hot.length ? Math.round(hot.filter(x=>x.calmed==="Y").length/hot.length*100) : null;
+  return { n, pct: n?Math.round(ys/n*100):null, mAvg: n?mAvg.toFixed(1):null, best, aAvg, calmedPct, hotN: hot.length };
+}
+
+/* ---------------- Range Nine helpers ---------------- */
+const isNine = sess => sess && sess.mode === "rangenine";
+const holeByN = (sess,n) => sess.course.holes.find(h=>h.n===n);
+const pressureShots = sess => liveShots(sess).filter(s=>s.block==="pressure");
+
+// Clubs live globally per course+hole so they carry to the next time this card is played.
+function clubsFor(sess, hole){
+  const saved = (state.courseClubs[sess.course.courseId]||{})[hole.n];
+  return saved && saved.length ? saved : (hole.shots||[]);
+}
+function setClubs(sess, hole, list){
+  const cid = sess.course.courseId;
+  if (!state.courseClubs[cid]) state.courseClubs[cid] = {};
+  state.courseClubs[cid][hole.n] = list;
+  hole.shots = list;
+}
+
+function holeShots(sess, n){
+  return pressureShots(sess).filter(s=>s.hole===n).sort((a,b)=>(a.slot||0)-(b.slot||0));
+}
+function currentHole(sess){
+  for (const h of sess.course.holes){
+    if (holeShots(sess,h.n).length < shotsNeeded(h)) return h;
+  }
+  return null;   // nine complete
+}
+function holeResult(sess, hole){
+  const hs = holeShots(sess, hole.n);
+  if (hs.length < shotsNeeded(hole)) return null;
+  const ys = hs.filter(s=>s.stack==="Y").length;
+  if (hole.par === 3) return ys >= 1 ? {k:"par",label:"Par or better"} : {k:"bogey",label:"Bogey — circle owed"};
+  if (ys === 2) return {k:"birdie",label:"Birdie look"};
+  if (ys === 1) return {k:"par",label:"Par"};
+  return {k:"bogey",label:"Bogey — circle owed"};
+}
+function circlesOwed(sess){
+  if (!isNine(sess)) return 0;
+  return sess.course.holes.reduce((a,h)=>{
+    const r = holeResult(sess,h);
+    return a + (r && r.k==="bogey" ? 1 : 0);
+  }, 0);
 }
 
 /* ---------------- Selection state for the log card ---------------- */
-let sel = { stack:null, mushin:null, fairway:null };
+let sel = { stack:null, mushin:null, fairway:null, arousal:null, calmed:null };
+let teeSel = null;   // pre-shot declaration, locked when the shot is logged
 
-function bindSeg(segId, key, classes){
+function bindSeg(segId, key, classes, after){
   $(segId).addEventListener("click", e=>{
     const b = e.target.closest("button"); if(!b) return;
     sel[key] = b.dataset.v;
     [...$(segId).children].forEach(x=>x.className="");
     b.className = classes[b.dataset.v] || "sel-g";
+    if (after) after();
     updateLogBtn();
   });
 }
 bindSeg("stackSeg","stack",{Y:"sel-y",N:"sel-n"});
 bindSeg("mushinSeg","mushin",{});
 bindSeg("fairwaySeg","fairway",{hit:"sel-g",miss:"sel-a"});
+bindSeg("calmedSeg","calmed",{Y:"sel-y",N:"sel-n"});
+$("arousalSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  sel.arousal = Number(b.dataset.v);
+  [...$("arousalSeg").children].forEach(x=>x.className="");
+  b.className = sel.arousal >= 7 ? "sel-hot" : "sel-calm";
+  syncArousalUI();
+  updateLogBtn();
+});
+
+// Node 3: above a 6 the plan calls for an extra exhale, so that's the only place
+// the calm-down question is asked. Below 7 there was nothing to regulate.
+function syncArousalUI(){
+  const hot = sel.arousal !== null && sel.arousal >= 7;
+  $("calmedWrap").style.display = hot ? "block" : "none";
+  $("arousalHint").textContent = hot ? "— one extra slow exhale" : "";
+  if (!hot){
+    sel.calmed = null;
+    [...$("calmedSeg").children].forEach(x=>x.className="");
+  }
+}
 
 function clearSelections(){
-  sel = { stack:null, mushin:null, fairway:null };
-  for (const id of ["stackSeg","mushinSeg","fairwaySeg"])
+  sel = { stack:null, mushin:null, fairway:null, arousal:null, calmed:null };
+  for (const id of ["stackSeg","mushinSeg","fairwaySeg","arousalSeg","calmedSeg"])
     [...$(id).children].forEach(x=>x.className="");
   $("noteInput").value = "";
+  syncArousalUI();
   updateLogBtn();
 }
 
 function currentBlock(sess){
-  return sess.shots.length < state.settings.shotsPerBlock ? "routine" : "pressure";
+  if (isNine(sess)){
+    const routineN = sess.routineCount || state.settings.nineRoutine;
+    return liveShots(sess).filter(s=>s.block==="routine").length < routineN ? "routine" : "pressure";
+  }
+  return liveShots(sess).length < state.settings.shotsPerBlock ? "routine" : "pressure";
 }
 
 function updateLogBtn(){
   const sess = activeSession(); if(!sess) return;
-  const needFairway = currentBlock(sess)==="pressure";
-  $("logBtn").disabled = !(sel.stack && sel.mushin && (!needFairway || sel.fairway));
+  const block = currentBlock(sess);
+  const needTarget = block === "pressure";
+  const needCalm = sel.arousal !== null && sel.arousal >= 7;
+  const nineDone = isNine(sess) && block==="pressure" && !currentHole(sess);
+  $("logBtn").disabled = nineDone || !(sel.stack && sel.mushin && sel.arousal
+    && (!needCalm || sel.calmed) && (!needTarget || sel.fairway));
+  $("logBtn").textContent = nineDone ? "Nine complete" : "Log shot";
 }
 
 /* ---------------- Session flow ---------------- */
@@ -389,14 +739,53 @@ $("blockBanner").onclick = ()=>{
     : "PRESSURE SIM — real stakes. Fairway or it doesn't count. Miss the fairway and you owe the Circle Drill: 8 straight 3-footers, miss one and the circle restarts.");
 };
 
-$("startBtn").onclick = ()=>{
-  state.sessions.push({ id: Date.now(), startedAt: Date.now(), endedAt: null, shots: [], drills: [] });
+function newSession(extra){
+  const s = Object.assign({
+    id: Date.now(), startedAt: Date.now(), endedAt: null,
+    mode: "classic", shots: [], drills: [], staged: null
+  }, extra || {});
+  state.sessions.push(s);
   clearSelections();
   persist();
+}
+
+$("startClassicBtn").onclick = ()=> newSession();
+
+$("startNineBtn").onclick = ()=>{
+  const sc = $("nineCourse");
+  sc.innerHTML = COURSES.map(c=>`<option value="${c.courseId}">${c.name}</option>`).join("");
+  teeSel = state.settings.defaultTee || "gold";
+  paintNineTee();
+  $("nineModal").classList.add("open");
+};
+function paintNineTee(){
+  [...$("nineTeeSeg").children].forEach(b=>{
+    b.className = b.dataset.v === teeSel ? (teeSel==="gold"?"sel-a":"sel-g") : "";
+  });
+}
+$("nineTeeSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  teeSel = b.dataset.v; paintNineTee();
+});
+$("nineCancel").onclick = ()=> $("nineModal").classList.remove("open");
+$("nineStart").onclick = ()=>{
+  const c = COURSES.find(x=>x.courseId === $("nineCourse").value);
+  if (!c) return;
+  const course = JSON.parse(JSON.stringify(c));
+  for (const h of course.holes){
+    const saved = (state.courseClubs[course.courseId]||{})[h.n];
+    if (saved && saved.length) h.shots = saved;
+  }
+  state.settings.defaultTee = teeSel;
+  $("nineModal").classList.remove("open");
+  newSession({ mode:"rangenine", course, routineCount: state.settings.nineRoutine, tee: teeSel });
 };
 
 $("endBtn").onclick = ()=>{
   const sess = activeSession(); if(!sess) return;
+  if (demoMode) return exitDemo();
+  const owed = circlesOwed(sess) - sess.drills.length;
+  if (owed > 0 && !confirm(`${owed} circle${owed>1?"s":""} still owed — end the session anyway?`)) return;
   sess.endedAt = Date.now();
   persist();
   toast("Session saved");
@@ -409,29 +798,69 @@ $("logBtn").onclick = ()=>{
     t: Date.now(),
     stack: sel.stack,
     mushin: Number(sel.mushin),
+    arousal: sel.arousal,
+    calmed: sel.calmed,
     note: $("noteInput").value.trim().slice(0,20),
     block,
     fairway: block==="pressure" ? sel.fairway : null
   };
-  sess.shots.push(shot);
-  const missed = shot.fairway==="miss";
+  let completed = null;
+  if (isNine(sess) && block==="pressure"){
+    const h = currentHole(sess);
+    if (!h) return;
+    shot.hole = h.n;
+    shot.slot = holeShots(sess,h.n).length;
+    shot.tee = teeSel || sess.tee || "gold";
+    sess.shots.push(shot);
+    if (holeShots(sess,h.n).length >= shotsNeeded(h)) completed = { hole:h, res: holeResult(sess,h) };
+  } else {
+    sess.shots.push(shot);
+  }
+  const classicMiss = !isNine(sess) && shot.fairway==="miss";
   clearSelections();
   persist();
-  if (missed) openDrill();
+  if (completed && completed.res){
+    if (completed.res.k === "bogey") toast(`Hole ${completed.hole.n}: bogey — circle owed`);
+    else toast(`Hole ${completed.hole.n}: ${completed.res.label}`);
+  }
+  if (classicMiss) openDrill();
 };
 
-/* ---------------- Presence timer (timestamp-based) ---------------- */
+/* ---------------- Tee toggle (pre-shot declaration) ---------------- */
+$("teeToggle").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  teeSel = b.dataset.v;
+  render();
+});
+
+/* ---------------- Staging state ---------------- */
+$("stageRow").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  const sess = activeSession(); if(!sess) return;
+  const v = b.dataset.v;
+  if (v === "packed"){
+    const owed = circlesOwed(sess) - sess.drills.length;
+    if (owed > 0 && !confirm("Debt outstanding — pack up anyway?")) return;
+  }
+  sess.staged = v;
+  persist();
+});
+
+/* ---------------- Presence timer (timestamp-based, pressure only) ---------------- */
 setInterval(()=>{
   const sess = activeSession();
   const el = $("presence");
-  if (!sess || !sess.shots.length){
+  if (!sess || !liveShots(sess).length || currentBlock(sess) !== "pressure"){
     el.className = "presence ready";
-    el.textContent = "Present. Log your next shot.";
+    el.textContent = sess && currentBlock(sess)==="routine"
+      ? "Routine reps — log when you're ready."
+      : "Present. Log your next shot.";
     return;
   }
-  const last = sess.shots[sess.shots.length-1].t;
+  const shots = liveShots(sess);
+  const last = shots[shots.length-1].t;
   const elapsed = Math.floor((Date.now()-last)/1000);
-  const remain = state.settings.pauseSec - elapsed;
+  const remain = (demoMode ? 3 : state.settings.pauseSec) - elapsed;
   if (remain > 0){
     el.className = "presence";
     el.textContent = `Breathe — ${fmtClock(remain)}`;
@@ -442,12 +871,14 @@ setInterval(()=>{
 }, 500);
 
 /* ---------------- Circle drill ---------------- */
-let drillInt = null;
+let drillInt = null, pendingDrill = null;
 function openDrill(startedAt){
   if (!state.activeDrill){
     state.activeDrill = { startedAt: startedAt || Date.now() };
     persist();
   }
+  $("drillRunning").style.display = "block";
+  $("drillDeduct").style.display = "none";
   $("drillModal").classList.add("open");
   clearInterval(drillInt);
   drillInt = setInterval(()=>{
@@ -455,30 +886,169 @@ function openDrill(startedAt){
     $("drillTimer").textContent = fmtClock(Math.floor((Date.now()-state.activeDrill.startedAt)/1000));
   }, 300);
 }
+$("payDebtBtn").onclick = ()=> openDrill();
+
 $("drillDone").onclick = ()=>{
   clearInterval(drillInt);
   if (!state.activeDrill) return;
-  const dur = Math.floor((Date.now()-state.activeDrill.startedAt)/1000);
-  const sess = activeSession();
-  (sess || state.sessions[state.sessions.length-1] || {drills:[]}).drills.push({ t: Date.now(), durationSec: dur });
+  pendingDrill = Math.floor((Date.now()-state.activeDrill.startedAt)/1000);
+  $("drillTimer").textContent = fmtClock(pendingDrill);
+  $("drillRunning").style.display = "none";
+  $("drillDeduct").style.display = "block";
+  $("setupInput").value = "";
+};
+
+// Accepts "90" or "1:30". Raw duration is always kept; only the effective time is adjusted.
+function parseSetup(v){
+  v = (v||"").trim();
+  if (!v) return 0;
+  if (v.includes(":")){
+    const [m,s] = v.split(":");
+    return (parseInt(m,10)||0)*60 + (parseInt(s,10)||0);
+  }
+  return parseInt(v,10) || 0;
+}
+$("drillSave").onclick = ()=>{
+  if (pendingDrill === null) return;
+  const setup = Math.max(0, Math.min(pendingDrill, parseSetup($("setupInput").value)));
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  if (sess) sess.drills.push({ t: Date.now(), durationSec: pendingDrill, setupSec: setup });
+  const eff = pendingDrill - setup;
+  pendingDrill = null;
   state.activeDrill = null;
   $("drillModal").classList.remove("open");
   persist();
-  toast(`Circle closed — ${fmtClock(dur)}`);
+  toast(`Circle closed — ${fmtClock(eff)}`);
 };
-// A drill in progress survives a reload — reopen it
 if (state.activeDrill) openDrill(state.activeDrill.startedAt);
+
+/* ---------------- Shot log: reassign / flag ---------------- */
+let editIdx = null, editBlock = null;
+
+function openShotEdit(i){
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  if (!sess) return;
+  const s = sess.shots[i]; if (!s) return;
+  editIdx = i; editBlock = s.block;
+  $("shotSummary").textContent =
+    `${fmtTime(s.t)} · Stack ${s.stack} · Mushin ${s.mushin}` +
+    (typeof s.arousal==="number" ? ` · Arousal ${s.arousal}` : "") +
+    (s.note ? ` · "${s.note}"` : "");
+  [...$("editBlockSeg").children].forEach(b=>{
+    b.className = b.dataset.v===editBlock ? (editBlock==="routine"?"sel-g":"sel-a") : "";
+  });
+  const nine = isNine(sess);
+  $("editHoleWrap").style.display = nine && editBlock==="pressure" ? "block" : "none";
+  if (nine){
+    $("editHole").innerHTML = sess.course.holes.map(h=>
+      `<option value="${h.n}"${s.hole===h.n?" selected":""}>Hole ${h.n} — ${h.name}</option>`).join("");
+    paintSlotOptions(sess, s);
+  }
+  $("shotFlagBtn").textContent = s.misEntry ? "Restore this shot" : "Flag as mis-entry";
+  // Hard delete is only available once the session is closed — never mid-pressure.
+  $("shotDeleteBtn").style.display = sess.endedAt ? "block" : "none";
+  $("shotModal").classList.add("open");
+}
+function paintSlotOptions(sess, s){
+  const hn = Number($("editHole").value);
+  const h = holeByN(sess, hn);
+  const need = h ? shotsNeeded(h) : 2;
+  $("editSlot").innerHTML = Array.from({length:need},(_,k)=>
+    `<option value="${k}"${(s.slot||0)===k?" selected":""}>Shot ${k+1}</option>`).join("");
+}
+$("editHole").addEventListener("change", ()=>{
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  if (sess && editIdx!==null) paintSlotOptions(sess, sess.shots[editIdx]);
+});
+$("editBlockSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  editBlock = b.dataset.v;
+  [...$("editBlockSeg").children].forEach(x=>{
+    x.className = x.dataset.v===editBlock ? (editBlock==="routine"?"sel-g":"sel-a") : "";
+  });
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  $("editHoleWrap").style.display = isNine(sess) && editBlock==="pressure" ? "block" : "none";
+});
+$("shotSaveBtn").onclick = ()=>{
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  if (!sess || editIdx===null) return;
+  const s = sess.shots[editIdx];
+  s.block = editBlock;
+  if (isNine(sess) && editBlock==="pressure"){
+    s.hole = Number($("editHole").value);
+    s.slot = Number($("editSlot").value);
+  } else { s.hole = undefined; s.slot = undefined; }
+  if (editBlock !== "pressure") s.fairway = null;
+  s.edited = true;               // the correction stays visible
+  $("shotModal").classList.remove("open");
+  editIdx = null;
+  persist();
+  toast("Shot moved");
+};
+$("shotFlagBtn").onclick = ()=>{
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  if (!sess || editIdx===null) return;
+  const s = sess.shots[editIdx];
+  s.misEntry = !s.misEntry;
+  $("shotModal").classList.remove("open");
+  const was = s.misEntry;
+  editIdx = null;
+  persist();
+  toast(was ? "Flagged as mis-entry" : "Shot restored");
+};
+$("shotDeleteBtn").onclick = ()=>{
+  const sess = activeSession() || state.sessions[state.sessions.length-1];
+  if (!sess || editIdx===null) return;
+  if (!confirm("Delete this shot permanently? This can't be undone.")) return;
+  sess.shots.splice(editIdx,1);
+  $("shotModal").classList.remove("open");
+  editIdx = null;
+  persist();
+  toast("Shot deleted");
+};
+$("shotCancelBtn").onclick = ()=>{ editIdx = null; $("shotModal").classList.remove("open"); };
+
+/* ---------------- Demo mode (never persisted) ---------------- */
+$("startDemoBtn").onclick = ()=>{
+  realState = state;
+  demoMode = true;
+  state = {
+    settings: { pauseSec: 3, shotsPerBlock: 1, nineRoutine: 7, defaultTee:"gold" },
+    sessions: [{ id: 1, startedAt: Date.now(), endedAt: null, mode:"classic", shots: [], drills: [], staged: null }],
+    courseClubs: {}, activeDrill: null, updatedAt: 0
+  };
+  $("demoBanner").style.display = "block";
+  clearSelections();
+  render();
+  toast("Demo — 1 routine shot, then 3 pressure");
+};
+function exitDemo(){
+  demoMode = false;
+  state = realState; realState = null;
+  clearInterval(drillInt); pendingDrill = null;
+  for (const m of ["drillModal","shotModal","nineModal"]) $(m).classList.remove("open");
+  $("demoBanner").style.display = "none";
+  clearSelections();
+  render();
+  // A real drill interrupted by the demo is still owed — reopen it.
+  if (state.activeDrill) openDrill(state.activeDrill.startedAt);
+  toast("Demo ended — nothing saved");
+}
 
 /* ---------------- Settings ---------------- */
 $("settingsBtn").onclick = ()=>{
   $("setPause").value = state.settings.pauseSec;
   $("setBlock").value = state.settings.shotsPerBlock;
+  $("setNineRoutine").value = state.settings.nineRoutine;
   $("settingsModal").classList.add("open");
 };
 $("saveSettings").onclick = ()=>{
-  const p = parseInt($("setPause").value,10), b = parseInt($("setBlock").value,10);
+  const p = parseInt($("setPause").value,10),
+        b = parseInt($("setBlock").value,10),
+        r = parseInt($("setNineRoutine").value,10);
   if (p>=15 && p<=600) state.settings.pauseSec = p;
   if (b>=3 && b<=50) state.settings.shotsPerBlock = b;
+  if (r>=1 && r<=30) state.settings.nineRoutine = r;
   $("settingsModal").classList.remove("open");
   persist();
   toast("Settings saved");
@@ -503,7 +1073,7 @@ $("doRestore").onclick = ()=>{
   try {
     const s = JSON.parse($("restoreText").value.trim());
     if (!s || !Array.isArray(s.sessions)) throw new Error("bad shape");
-    state = s;
+    state = migrate(s);
     $("restoreModal").classList.remove("open");
     persist();
     toast("Backup restored");
@@ -512,7 +1082,96 @@ $("doRestore").onclick = ()=>{
   }
 };
 
+/* ---------------- Keep entry fields visible when the keyboard opens ---------------- */
+$("noteInput").addEventListener("focus", ()=>{
+  setTimeout(()=> $("noteInput").scrollIntoView({block:"center", behavior:"smooth"}), 250);
+});
+
+/* ---------------- Session delete (blank sessions only) ---------------- */
+function deleteSession(id){
+  const s = state.sessions.find(x=>x.id===id);
+  if (!s || s.shots.length || s.drills.length) return;
+  if (!confirm("Delete this empty session?")) return;
+  state.sessions = state.sessions.filter(x=>x.id!==id);
+  persist();
+  toast("Empty session deleted");
+}
+
 /* ---------------- Render ---------------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function renderHoleCard(sess){
+  const h = currentHole(sess);
+  const tee = teeSel || sess.tee || "gold";
+  if (!h){
+    $("hcNum").textContent = "Nine complete";
+    $("hcName").textContent = "";
+    $("hcMeta").textContent = "";
+    $("hcLine").textContent = "End the session to save the card.";
+    $("hcClubs").textContent = "";
+    $("hcSlot").textContent = "";
+    return;
+  }
+  $("hcNum").textContent = `Hole ${h.n}`;
+  $("hcName").textContent = h.name;
+  $("hcMeta").textContent = `Par ${h.par} · ${h.yds[tee]} · HCP ${h.hcp}`;
+  $("hcLine").textContent = h.line || "";
+  const clubs = clubsFor(sess,h);
+  $("hcClubs").innerHTML = (clubs.length ? esc(clubs.join(" → ")) : "<em>No clubs planned</em>")
+    + ` <button id="clubBtn">${clubs.length?"edit":"add"}</button>`;
+  $("clubBtn").onclick = ()=>{
+    const v = prompt(`Planned clubs for hole ${h.n} (comma separated)`, clubs.join(", "));
+    if (v === null) return;
+    setClubs(sess, h, v.split(",").map(x=>x.trim()).filter(Boolean));
+    persist();
+  };
+  [...$("teeToggle").children].forEach(b=>{
+    b.className = b.dataset.v===tee ? (tee==="gold"?"on-gold":"on-blue") : "";
+  });
+  $("hcSlot").textContent = `Shot ${holeShots(sess,h.n).length+1} of ${shotsNeeded(h)}`;
+}
+
+function renderShotLog(sess){
+  const el = $("shotLog");
+  const live = [], flagged = [];
+  sess.shots.forEach((s,i)=> (s.misEntry ? flagged : live).push({s,i}));
+  if (!sess.shots.length){
+    el.className = "empty"; el.textContent = "No shots yet."; return;
+  }
+  el.className = "";
+  const rowHtml = ({s,i}) => {
+    const where = s.block==="pressure"
+      ? (isNine(sess) && s.hole ? `H${s.hole}.${(s.slot||0)+1}` : "Pressure")
+      : "Routine";
+    const bits = [`Stack ${s.stack}`, `M${s.mushin}`];
+    if (typeof s.arousal==="number") bits.push(`A${s.arousal}${s.calmed?`/${s.calmed}`:""}`);
+    if (s.fairway) bits.push(s.fairway==="hit"?"✓":"✗");
+    if (s.tee) bits.push(s.tee==="gold"?"G":"B");
+    return `<button class="shot-row${s.misEntry?" flagged":""}" data-i="${i}">
+      <span class="who">${where}${s.edited?' <span class="tag">EDITED</span>':""}</span>
+      <span class="det">${esc(bits.join(" · "))}${s.note?` · ${esc(s.note)}`:""}</span></button>`;
+  };
+  el.innerHTML = live.map(rowHtml).join("")
+    + (flagged.length ? `<div class="misentry-head">Mis-entries — excluded from all stats</div>` + flagged.map(rowHtml).join("") : "");
+  el.querySelectorAll(".shot-row").forEach(b=>{
+    b.onclick = ()=> openShotEdit(Number(b.dataset.i));
+  });
+}
+
+function renderNineCard(sess){
+  const wrap = $("nineCardWrap");
+  if (!isNine(sess)){ wrap.style.display="none"; return; }
+  wrap.style.display = "block";
+  $("nineCard").innerHTML = sess.course.holes.map(h=>{
+    const hs = holeShots(sess,h.n);
+    const r = holeResult(sess,h);
+    const marks = hs.map(s=>s.stack).join(" ") || "—";
+    const cls = r ? (r.k==="birdie"?"res-birdie":r.k==="par"?"res-par":"res-bogey") : "res-par";
+    return `<div class="row"><span>${h.n} ${esc(h.name)}</span>
+      <span class="sub">${marks} &middot; <span class="${cls}">${r?esc(r.label):"—"}</span></span></div>`;
+  }).join("");
+}
+
 function render(){
   const sess = activeSession();
   $("noSession").style.display = sess ? "none" : "block";
@@ -520,20 +1179,51 @@ function render(){
 
   if (sess){
     const block = currentBlock(sess);
-    const bb = $("blockBanner");
-    bb.className = "block-banner " + block;
-    $("blockName").textContent = block==="routine" ? "Routine reps" : "Pressure sim";
-    const inBlock = block==="routine"
-      ? sess.shots.length + 1
-      : sess.shots.length - state.settings.shotsPerBlock + 1;
-    $("blockCount").textContent = `${inBlock} / ${state.settings.shotsPerBlock}`;
+    const nine = isNine(sess);
+    const ninePressure = nine && block==="pressure";
+
+    $("blockBanner").style.display = ninePressure ? "none" : "flex";
+    $("holeCard").style.display = ninePressure ? "block" : "none";
+
+    if (!ninePressure){
+      const bb = $("blockBanner");
+      bb.className = "block-banner " + block;
+      $("blockName").textContent = block==="routine" ? "Routine reps" : "Pressure sim";
+      const per = nine ? (sess.routineCount || state.settings.nineRoutine) : state.settings.shotsPerBlock;
+      const n = liveShots(sess).filter(s=> nine ? s.block==="routine" : true).length;
+      const inBlock = block==="routine" ? n + 1 : n - per + 1;
+      // Classic pressure has no fixed length — show a plain count rather than a denominator it can exceed.
+      $("blockCount").textContent = block==="routine" ? `${inBlock} / ${per}` : `Shot ${inBlock}`;
+    } else {
+      renderHoleCard(sess);
+    }
+
     $("fairwayWrap").style.display = block==="pressure" ? "block" : "none";
+    $("fairwayLbl").textContent = nine ? "Target found" : "Fairway (pressure)";
+
+    // Circle debt + staging, pressure block only
+    const showDebt = nine && block==="pressure";
+    $("debtBar").style.display = showDebt ? "flex" : "none";
+    $("stageRow").style.display = showDebt ? "flex" : "none";
+    if (showDebt){
+      const owed = circlesOwed(sess), paid = sess.drills.length, out = owed - paid;
+      $("debtBar").className = "debt" + (out>0 ? "" : " clear");
+      $("debtText").textContent = `Circles owed ${owed} · paid ${paid}`;
+      $("payDebtBtn").style.display = out>0 ? "block" : "none";
+      $("stagedBtn").className = sess.staged==="staged" ? "on" : "";
+      $("packedBtn").className = sess.staged==="packed" ? "on" : "";
+    }
 
     const st = sessionStats(sess);
     $("stShots").textContent = st.n;
-    $("stStack").textContent = st.pct===null ? "\u2013" : st.pct + "%";
-    $("stMushin").textContent = st.mAvg ?? "\u2013";
+    $("stStack").textContent = st.pct===null ? "–" : st.pct + "%";
+    $("stMushin").textContent = st.mAvg ?? "–";
     $("stStreak").textContent = st.best;
+    $("stArousal").textContent = st.aAvg ?? "–";
+    $("stCalmed").textContent = st.calmedPct===null ? "–" : st.calmedPct + "%";
+
+    renderShotLog(sess);
+    renderNineCard(sess);
     updateLogBtn();
   } else {
     const done = state.sessions.filter(s=>s.endedAt);
@@ -542,50 +1232,55 @@ function render(){
       const st = sessionStats(last);
       $("lastSummary").className = "";
       $("lastSummary").innerHTML =
-        `<div class="row"><span>${fmtDate(last.startedAt)}</span>
-         <span>${st.n} shots &middot; ${st.pct??0}% Stack &middot; ${st.mAvg??"\u2013"} Mushin &middot; streak ${st.best}</span></div>`;
+        `<div class="row"><span>${fmtDate(last.startedAt)}${last.mode==="rangenine"?" · Nine":""}</span>
+         <span class="sub">${st.n} shots &middot; ${st.pct??0}% Stack &middot; ${st.mAvg??"–"} Mushin &middot; streak ${st.best}</span></div>`;
     }
   }
 
-  // Drill stats + history (all sessions, newest first)
-  const allDrills = state.sessions.flatMap(s=>s.drills);
+  // Drill stats + history — effective time (raw minus staging), all sessions, newest first
+  const allDrills = state.sessions.flatMap(s=>s.drills||[]);
   const drills = [...allDrills].sort((a,b)=>b.t-a.t).slice(0,8);
   const dl = $("drillList");
   if (allDrills.length){
     $("drillStats").style.display = "flex";
     $("dCount").textContent = allDrills.length;
-    $("dFast").textContent = fmtClock(Math.min(...allDrills.map(d=>d.durationSec)));
-    $("dAvg").textContent = fmtClock(Math.round(allDrills.reduce((a,d)=>a+d.durationSec,0)/allDrills.length));
+    $("dFast").textContent = fmtClock(Math.min(...allDrills.map(effDrill)));
+    $("dAvg").textContent = fmtClock(Math.round(allDrills.reduce((a,d)=>a+effDrill(d),0)/allDrills.length));
     dl.className = "";
     dl.innerHTML = drills.map(d=>
-      `<div class="row"><span>${fmtDate(d.t)}</span><span>${fmtClock(d.durationSec)}</span></div>`).join("");
+      `<div class="row"><span>${fmtDate(d.t)}</span><span>${fmtClock(effDrill(d))}${d.setupSec?` <span class="sub">(raw ${fmtClock(d.durationSec)})</span>`:""}</span></div>`).join("");
   } else {
     $("drillStats").style.display = "none";
     dl.className = "empty"; dl.textContent = "No drills yet.";
   }
 
-  // Session history
-  const done = state.sessions.filter(s=>s.endedAt).slice(-8).reverse();
+  // Session history — blank sessions (no shots, no drills) can be deleted
+  const past = state.sessions.filter(s=>s.endedAt).slice(-8).reverse();
   const slEl = $("sessionList");
-  if (done.length){
+  if (past.length){
     slEl.className = "";
-    slEl.innerHTML = done.map(s=>{
+    slEl.innerHTML = past.map(s=>{
       const st = sessionStats(s);
-      return `<div class="row"><span>${fmtDate(s.startedAt)}</span>
-        <span class="sub">${st.n} shots &middot; ${st.pct??0}% &middot; M ${st.mAvg??"\u2013"}</span></div>`;
+      const blank = !s.shots.length && !s.drills.length;
+      return `<div class="row"><span>${fmtDate(s.startedAt)}${s.mode==="rangenine"?" · Nine":""}</span>
+        <span class="sub">${blank ? "Empty" : `${st.n} shots &middot; ${st.pct??0}% &middot; M ${st.mAvg??"–"}`}
+        ${blank?`<button class="del-btn" data-del="${s.id}">Delete</button>`:""}</span></div>`;
     }).join("");
+    slEl.querySelectorAll("[data-del]").forEach(b=>{
+      b.onclick = ()=> deleteSession(Number(b.dataset.del));
+    });
   } else { slEl.className = "empty"; slEl.textContent = "Nothing here yet."; }
 }
 
 /* ---------------- Firebase cloud sync (optional) ---------------- */
 let pushTimer = null, db = null, uid = null, fs = null;
 function schedulePush(){
-  if (!db || !uid) return;
+  if (!db || !uid || demoMode) return;
   clearTimeout(pushTimer);
   pushTimer = setTimeout(pushToCloud, 1500);
 }
 async function pushToCloud(){
-  if (!db || !uid) return;
+  if (!db || !uid || demoMode) return;
   try {
     await fs.setDoc(fs.doc(db, "users", uid), { data: JSON.stringify(state), updatedAt: state.updatedAt });
     setChip(true, "Synced");
@@ -637,8 +1332,9 @@ if (!configured){
           if (snap.exists()){
             const remote = snap.data();
             if (remote.updatedAt > state.updatedAt && remote.data){
-              state = JSON.parse(remote.data);
-              const raw = JSON.stringify(state);
+              const incoming = migrate(JSON.parse(remote.data));
+              if (demoMode) realState = incoming; else state = incoming;
+              const raw = JSON.stringify(incoming);
               localStorage.setItem(K1, raw); localStorage.setItem(K2, raw);
               render();
               toast("Pulled newer data from cloud");
