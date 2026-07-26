@@ -1,5 +1,20 @@
 # FlowCode Tracker — Backlog
 
+## ⚠️ TEMPORARY DEV SCAFFOLDING — remove before this is "done"
+
+Both were added 2026-07-26 at Matt's request, explicitly to be removed later:
+
+1. **Colour scheme picker** (Settings → "Colour scheme (dev)"). To remove: delete
+   the `THEMES` object, `applyTheme()`, the `#setTheme` field in the settings
+   modal, and its references in the settings open/save/close handlers. Then hard-code
+   whichever palette Matt lands on into the `:root` block.
+2. **`DEV_DELETE = true`** in `index.html` — lets any session be deleted, not just
+   blank ones, so tweak-run sessions don't taint real stats. Set to `false` when the
+   app is settled; blank-session delete then remains, per the honesty principle.
+
+---
+
+
 Edits queued after the 2026-07-25 range session. Newest intent at top.
 
 **Status 2026-07-26:** both items below are now BUILT, along with the full
