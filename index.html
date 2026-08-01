@@ -469,6 +469,15 @@
       <input type="number" id="startShotPause" min="5" max="600" inputmode="numeric">
     </div>
     <p class="note">Runs in full. No skip &mdash; the Log button stays locked until it does.</p>
+    <div class="field">
+      <p class="lbl">Circle Drill &mdash; putts in the circle</p>
+      <input type="number" id="startPutts" min="2" max="30" inputmode="numeric">
+    </div>
+    <div class="field">
+      <p class="lbl">Circle Drill &mdash; distance (feet)</p>
+      <input type="number" id="startFeet" min="1" max="30" inputmode="numeric">
+      <p class="note" style="margin-bottom:0">Every putt must drop. Miss one and the circle restarts.</p>
+    </div>
     <button class="big" id="startGo">Start</button>
     <button class="big quiet" id="startCancel">Cancel</button>
   </div>
@@ -489,7 +498,7 @@
 <div class="modal-bg" id="drillModal">
   <div class="modal">
     <h3>Circle Drill</h3>
-    <p class="drill-note">8 putts, 3 feet, full circle. All in a row.<br>Miss one &mdash; the circle restarts.</p>
+    <p class="drill-note" id="drillNote">8 putts, 3 feet, full circle. All in a row.<br>Miss one &mdash; the circle restarts.</p>
     <div class="drill-timer" id="drillTimer">0:00</div>
     <div id="drillRunning">
       <button class="big" id="drillDone">Drill complete</button>
@@ -639,7 +648,8 @@ const K3 = "flowtracker_v1_backup2";
 const KEYS = [K1, K2, K3];
 
 const defaultState = () => ({
-  settings: { pauseSec: 120, shotPauseSec: 30, shotsPerBlock: 10, nineRoutine: 7, defaultTee: "gold", theme: "fairway" },
+  settings: { pauseSec: 120, shotPauseSec: 30, shotsPerBlock: 10, nineRoutine: 7,
+              circlePutts: 8, circleFeet: 3, defaultTee: "gold", theme: "fairway" },
   sessions: [],
   courseClubs: {},
   activeDrill: null,
@@ -872,9 +882,10 @@ function updateLogBtn(){
 /* ---------------- Session flow ---------------- */
 $("blockBanner").onclick = ()=>{
   const sess = activeSession(); if(!sess) return;
+  const c = circleOf(sess);
   alert(currentBlock(sess)==="routine"
     ? "ROUTINE REPS — full stack on every ball. Image locked, one cue per phase, treat each as a real tee shot. Ignore where it lands."
-    : "PRESSURE SIM — real stakes. Fairway or it doesn't count. Miss the fairway and you owe the Circle Drill: 8 straight 3-footers, miss one and the circle restarts.");
+    : `PRESSURE SIM — real stakes. Fairway or it doesn't count. Miss the fairway and you owe the Circle Drill: ${c.putts} straight ${c.feet}-footers, miss one and the circle restarts.`);
 };
 
 function newSession(extra){
@@ -905,6 +916,8 @@ function openStart(mode){
   $("startPauseLbl").textContent = nine ? "Pause between holes — seconds" : "Pressure pause — seconds";
   $("shotPauseField").style.display = nine ? "block" : "none";
   $("startShotPause").value = state.settings.shotPauseSec;
+  $("startPutts").value = state.settings.circlePutts;
+  $("startFeet").value = state.settings.circleFeet;
   $("startModal").classList.add("open");
 }
 $("startClassicBtn").onclick = ()=> openStart("classic");
@@ -926,8 +939,12 @@ $("startGo").onclick = ()=>{
   const r = parseInt($("startRoutine").value,10), p = parseInt($("startPause").value,10);
   if (!(r>=1 && r<=50)) return toast("Routine shots must be 1–50");
   if (!(p>=15 && p<=600)) return toast("Pause must be 15–600 seconds");
+  const cp = parseInt($("startPutts").value,10), cf = parseInt($("startFeet").value,10);
+  if (!(cp>=2 && cp<=30)) return toast("Circle putts must be 2–30");
+  if (!(cf>=1 && cf<=30)) return toast("Circle distance must be 1–30 feet");
+  state.settings.circlePutts = cp; state.settings.circleFeet = cf;
   const nine = startMode === "rangenine";
-  const extra = { mode: startMode, routineCount: r, pauseSec: p };
+  const extra = { mode: startMode, routineCount: r, pauseSec: p, circlePutts: cp, circleFeet: cf };
   if (nine){
     const sp = parseInt($("startShotPause").value,10);
     if (!(sp>=5 && sp<=600)) return toast("Between-shot pause must be 5–600 seconds");
@@ -1045,11 +1062,21 @@ setInterval(()=>{
 
 /* ---------------- Circle drill ---------------- */
 let drillInt = null, pendingDrill = null;
+// The circle's shape is set per session, so the drill screen states the deal you agreed to.
+function circleOf(sess){
+  return {
+    putts: (sess && sess.circlePutts) || state.settings.circlePutts,
+    feet:  (sess && sess.circleFeet)  || state.settings.circleFeet
+  };
+}
 function openDrill(startedAt){
   if (!state.activeDrill){
     state.activeDrill = { startedAt: startedAt || Date.now() };
     persist();
   }
+  const c = circleOf(activeSession());
+  $("drillNote").innerHTML = `${c.putts} putts, ${c.feet} ${c.feet===1?"foot":"feet"}, full circle. All in a row.`
+    + `<br>Miss one &mdash; the circle restarts.`;
   $("drillRunning").style.display = "block";
   $("drillDeduct").style.display = "none";
   $("drillModal").classList.add("open");
@@ -1085,7 +1112,10 @@ $("drillSave").onclick = ()=>{
   if (pendingDrill === null) return;
   const setup = Math.max(0, Math.min(pendingDrill, parseSetup($("setupInput").value)));
   const sess = activeSession() || state.sessions[state.sessions.length-1];
-  if (sess) sess.drills.push({ t: Date.now(), durationSec: pendingDrill, setupSec: setup });
+  const c = circleOf(sess);
+  // Record the circle's shape too — a 6×4ft time isn't comparable to an 8×3ft one.
+  if (sess) sess.drills.push({ t: Date.now(), durationSec: pendingDrill, setupSec: setup,
+                               putts: c.putts, feet: c.feet });
   const eff = pendingDrill - setup;
   pendingDrill = null;
   state.activeDrill = null;
@@ -1453,7 +1483,8 @@ function render(){
     $("dAvg").textContent = fmtClock(Math.round(allDrills.reduce((a,d)=>a+effDrill(d),0)/allDrills.length));
     dl.className = "";
     dl.innerHTML = drills.map(d=>
-      `<div class="row"><span>${fmtDate(d.t)}</span><span>${fmtClock(effDrill(d))}${d.setupSec?` <span class="sub">(raw ${fmtClock(d.durationSec)})</span>`:""}</span></div>`).join("");
+      `<div class="row"><span>${fmtDate(d.t)}${d.putts?` <span class="sub">${d.putts}&times;${d.feet}ft</span>`:""}</span>
+       <span>${fmtClock(effDrill(d))}${d.setupSec?` <span class="sub">(raw ${fmtClock(d.durationSec)})</span>`:""}</span></div>`).join("");
   } else {
     $("drillStats").style.display = "none";
     dl.className = "empty"; dl.textContent = "No drills yet.";
