@@ -174,6 +174,10 @@ Both are documented with removal steps in `TRACKER-BACKLOG.md`.
   my generalisation of his 2-shot rule, not something he specified).
 - Whether the arousal ≥7 threshold for the calm-down question is right.
 
+**Verification status:** every FocusCalm acceptance criterion except viewport-centering and
+the deferred Firestore rules has been checked on the deployed build — see the table in
+`FOCUSCALM-NOTES.md`. Chart output was verified numerically, not just for presence.
+
 **Needs a real device — never verified:**
 - **Viewport centering with the Android keyboard open.** Entry controls were moved above the
   session log and `scrollIntoView` added, but the acceptance test (20-shot list, every field

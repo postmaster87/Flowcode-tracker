@@ -108,6 +108,38 @@ Collecting restart counts would mean reversing that earlier decision — say so 
 
 ---
 
+## Acceptance criteria — verification status
+
+Checked against §9 of the handoff on the **deployed** beta build, 2026-08-02.
+
+| # | Criterion | Status |
+|---|---|---|
+| 1 | Toggle at session setup, defaults from Settings, locks on start | ✅ verified |
+| 2 | Entry screen unreachable during an active session | ✅ verified — card, nav and form all blocked |
+| 3 | Blended enforces one entry; per-block requires a block tag | ✅ verified both ways |
+| 4 | Entries immutable; flag one-way; flagged drop out of charts | ✅ verified |
+| 5 | Flagged entries deletable only on a later calendar day | ✅ verified — same-day delete refused |
+| 6 | Standalone "+ FocusCalm" with no session link | ✅ verified — defaults to `training`, block field hidden |
+| 7 | Demo shows no FocusCalm section, produces no entries | ✅ verified — data unchanged across a demo |
+| 8 | All three Review charts render; placeholders under 3 entries | ✅ verified with seeded multi-date data |
+| 9 | Review tab hidden during active sessions | ✅ verified |
+| 10 | Fields centre in viewport on focus (Galaxy S26 / Chrome) | ❌ **not verified — needs a real device** |
+| 11 | Firestore rules enforce §3 immutability | ⏸ **deferred** — see the standing question above |
+
+**Chart values were checked numerically**, not just for presence: plotted y-coordinates were
+back-computed and compared against hand-calculated expectations. All four series matched
+exactly (band 50/56/62/68, Mushin 50/83/75/93, calm-from-arousal 48/74/67/86, drill avg and
+low). The seeded data also produced the intended divergence signal — one session where band
+rose while Mushin dipped, i.e. a late intrusion.
+
+## Known limitation
+
+**A session with zero shots gets no "+ FC" button**, so a FocusCalm entry can't be linked to a
+completely empty session. This is deliberate-ish: blank sessions are the ones that can be
+deleted outright, and a band-only check-in is better recorded as a standalone `baseline` or
+`training` entry, which is exactly what the standalone path is for. Flagged here so it's a
+known choice rather than a silent gap.
+
 ## Not verified
 
 - **Viewport centering on the Galaxy S26 with the keyboard open.** The FocusCalm form is long;
@@ -116,4 +148,5 @@ Collecting restart counts would mean reversing that earlier decision — say so 
 
 ## Untouched, as instructed
 
-- `index.html` — production. Not modified in this work.
+- `index.html` — production. Not modified in this work. Re-verified on the live deploy:
+  Firebase and popup auth intact, no FocusCalm code present, no beta banner, no console errors.
