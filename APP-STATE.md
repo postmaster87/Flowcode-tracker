@@ -1,5 +1,10 @@
 # FlowCode Range Tracker — current state
 
+> **⚠️ SUPERSEDED.** Written before the FocusCalm beta module existed. For current state see
+> [HANDOFF-CLAUDE-CHAT.md](HANDOFF-CLAUDE-CHAT.md); for build detail see
+> [HANDOFF-CLAUDE-CODE.md](HANDOFF-CLAUDE-CODE.md). Kept for the record — §1–§9 below are
+> still accurate for production (`index.html`), which has not changed since.
+
 Status summary for the Claude chat that authored the mental game plan and the Range Nine spec.
 Written 2026-08-02. Reflects what is actually built and deployed, not what was planned.
 
